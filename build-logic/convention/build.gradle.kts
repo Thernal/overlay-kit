@@ -30,6 +30,10 @@ gradlePlugin {
             id = "io.thernal.overlaykit.compose"
             implementationClass = "io.thernal.overlaykit.buildlogic.ComposeConventionPlugin"
         }
+        register("injection") {
+            id = "io.thernal.overlaykit.injection"
+            implementationClass = "io.thernal.overlaykit.buildlogic.InjectionConventionPlugin"
+        }
         register("androidApplication") {
             id = "io.thernal.overlaykit.android.application"
             implementationClass = "io.thernal.overlaykit.buildlogic.AndroidApplicationConventionPlugin"

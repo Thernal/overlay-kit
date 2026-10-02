@@ -2,7 +2,7 @@
 
 overlay-kit is a **kit**: reusable Compose Multiplatform code that applications copy — renamed into their own
 package — with `skillctl.sh kit install overlay-kit` (the skill-manager skill, `Thernal/knowledge`), and later
-merge changes from with `kit update`. What they copy is listed in `kit.yml`: the modules `overlay/core`, `overlay/components`, `overlay/testing`.
+merge changes from with `kit update`. What they copy is listed in `kit.yml`: the modules `overlay/api`, `overlay/impl`, `overlay/wiring`, `overlay/testing`.
 Everything committed to `main` reaches every app that takes the next update, so this file's first rule is
 about delivery.
 
@@ -27,7 +27,10 @@ about delivery.
 - **No Material.** The kit's modules use Compose runtime, foundation, ui and animation, and
   navigationevent for back; only the sample may use Material. An overlay draws its text with
   `BasicText` and takes everything else as slots or style values.
-- **In-tree, never a window.** Overlays are composed by `OverlayLayers` in the app's own tree — no
+- **Contracts in `api`, work in `impl`** (epic D69, paging-kit's shape). A public overlay composable in
+  `api` is a thin call to its `…Renderer` from a CompositionLocal whose default previews it; `impl`
+  implements the renderer, `wiring` contributes it to the app graph. Nothing in `api` imports `impl`.
+- **In-tree, never a window.** Overlays are composed by `OverlayPluginLayers` in the app's own tree — no
   `Popup`, no `Dialog` — so a new overlay is an `OverlayLayerPlugin`. A modal one marks itself with
   `OverlayModalEffect`, moves focus with the `ModalFocusEffect` pattern, and adds `OverlayBackHandler`
   only while it is on screen (the dispatcher gives back to the handler added last).
@@ -36,8 +39,9 @@ about delivery.
   lag a frame behind their anchors.
 - **The kit carries no copy.** Accessibility labels live in `OverlayStrings` with English defaults the
   app replaces; no other string reaches the user.
-- The layer-package rules (`data`/`domain`/`presentation`) apply to `api`/`impl` modules only, which
-  this kit does not have (epic D65); packages here are named by feature (`host`, `placement`, `dialog`…).
+- `api`/`impl` code lives in `domain` or `presentation` packages, and layers point inwards (the kit's
+  own Detekt rules); below them, packages are named by feature (`host`, `placement`, `dialog`…).
+  `wiring` holds the Metro binding container only.
 - Kotlin nests block comments: never write `/*` inside KDoc (`image/*`, `ios/*.swift`).
 - Every module that changes what apps copy updates `kit.yml` in the same change: `code`, `surface`,
   `requires`.
@@ -48,8 +52,8 @@ about delivery.
 |---|---|---|
 | `README.md` | what the kit does, its layout, how it is built | anything a user of the kit sees changes |
 | `overlay/README.md` | why each part has its shape | a decision or trade-off changes |
-| `overlay/components/README.md` | how to use the overlays, task by task | the components' contract changes |
-| `overlay/core/README.md` | how to build on the host | the core's contract changes |
+| `overlay/api/README.md` | how to use the overlays, task by task | the contract changes |
+| `overlay/impl/README.md` | how to build an overlay of the app's own on the host | the host's building blocks change |
 | `docs/todos/` | open questions, one file each | a question opens or is decided (then delete it) |
 | `skills/overlay-kit` | the same for an agent in an app that took the kit | the public surface changes — `kit status` flags a skill older than the surface (LAG) |
 | `kit.yml` | what an app copies and what its build must provide | a module, file part or requirement changes |

@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.metro) apply false
 }
 
 // The custom Detekt rules live in the build-logic included build, so their tests are not picked up

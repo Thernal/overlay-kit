@@ -3,13 +3,13 @@ package io.thernal.overlaykit.sample.shared
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.thernal.overlaykit.overlay.components.dialog.DialogStyle
-import io.thernal.overlaykit.overlay.components.dropdown.DropdownStyle
-import io.thernal.overlaykit.overlay.components.sheet.BottomSheetStyle
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarStyle
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarTones
-import io.thernal.overlaykit.overlay.components.theme.OverlayStyles
-import io.thernal.overlaykit.overlay.components.tooltip.TooltipStyle
+import io.thernal.overlaykit.overlay.api.presentation.dialog.DialogStyle
+import io.thernal.overlaykit.overlay.api.presentation.dropdown.DropdownStyle
+import io.thernal.overlaykit.overlay.api.presentation.sheet.BottomSheetStyle
+import io.thernal.overlaykit.overlay.api.presentation.snackbar.SnackbarStyle
+import io.thernal.overlaykit.overlay.api.presentation.snackbar.SnackbarTones
+import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayStyles
+import io.thernal.overlaykit.overlay.api.presentation.tooltip.TooltipStyle
 
 private val Ink = Color(color = 0xFF14141A)
 private val Paper = Color(color = 0xFF23232D)

@@ -4,6 +4,19 @@ Why each part has the shape it has, and what changed from Act2Act's `uikit/compo
 (`core/overlay`, `product/{dialog,bottomsheet,dropdown,tooltip,snackbar,showcase}`), where it came from.
 The epic's decisions are D62–D67.
 
+## Contracts and renderers
+
+The modules are `api` / `impl` / `wiring` / `testing`, as every kit's (D12, D69), in paging-kit's shape:
+each public overlay composable in `api` — `OverlayDialog`, `OverlayHost`… — builds a `…Params` and calls
+the `…Renderer` it finds in a CompositionLocal. `impl` implements the renderers; `wiring` contributes them
+to the app graph as `ProvidedValue`s, installed once at the root. A feature module sees `api` only.
+
+The default renderer of each local is the preview one: a dialog or sheet draws its surface in place in a
+`@Preview` and nothing elsewhere; an anchored overlay draws its anchor alone; `OverlayHost` draws the
+content alone; `LocalSnackbarManager` drops messages. A screen previews without `impl`, and a missing
+installation shows as overlays that never appear. `testing` has `InlineOverlayRenderers`, which draw every
+overlay in place while it is visible — a UI test finds overlay content in the screen's own tree.
+
 ## One host in the app's own tree
 
 Every overlay is composed by `OverlayLayers`, above the app's content, in the same composition. None
@@ -46,6 +59,7 @@ lifecycle on the top **key**, never the entry, or every producer recomposition w
 | `DsTheme` tokens inside every overlay | `…Style` values with neutral defaults, `OverlayTheme(OverlayStyles)` once at the root | the kit cannot know an app's design system (D63) |
 | `UiString`, MaterialSymbols icons in `SnackbarData` | `SnackbarMessage(text: String)`, icons per kind from the style, none by default | no dependency on arch-kit or an icon set (D3, D64) |
 | `ComposableProvider`, `NoLocalProvider`, `ImmutableList` | `OverlayHost` / `ProvideOverlays` / `OverlayLayers` composables, `error(…)`, `List` | no dependency on the app's presentation layer or on kotlinx-collections |
+| `api`-less modules `core` / `components` (the first version, D65) | `api` / `impl` / `wiring` with renderers in CompositionLocals | the kits' shape; features see the contract only; previews and UI tests swap the renderer (D69) |
 | each app listing the plugins in its root | `OverlayHost` installs all six in a fixed order; an app adds its own with `extraPlugins` | the order is the kit's knowledge (a dialog above a sheet, the snackbar above all), and an unused plugin costs an idle controller (D68) |
 | `BaseModalOverlayState`: `animate()` behind a `Mutex` | `ModalOverlayState` (lifecycle) + `AnimatedModalOverlayState` (`Animatable`) | `Animatable` serialises its own animations and keeps velocity when a show interrupts a hide |
 | sheet drag: `draggable` + its own velocity projection | `AnchoredDraggableState` (hidden / expanded anchors), foundation's fling, `SheetNestedScrollConnection` | a list inside a sheet now hands over to the sheet at its top, as Material's do — Act2Act had no nested scroll |
@@ -60,7 +74,7 @@ lifecycle on the top **key**, never the entry, or every producer recomposition w
 
 Not taken: foundation's `BasicTooltipBox` — a `Popup` window, and experimental. The Navigation 3
 `BottomSheetScene` / `ModalScene` stay in the app: an adapter of a few lines puts an `OverlayBottomSheet`
-in an `OverlayScene` (`overlay/components/README.md` → Navigation 3).
+in an `OverlayScene` (`overlay/api/README.md` → Navigation 3).
 
 ## Placement
 

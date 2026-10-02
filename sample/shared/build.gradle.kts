@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.overlaykit.compose)
+    alias(libs.plugins.overlaykit.injection)
 }
 
 kotlin {
@@ -15,8 +16,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.overlay.core)
-                implementation(projects.overlay.components)
+                implementation(projects.overlay.api)
+                implementation(projects.overlay.wiring)
                 implementation(libs.compose.material3)
             }
         }

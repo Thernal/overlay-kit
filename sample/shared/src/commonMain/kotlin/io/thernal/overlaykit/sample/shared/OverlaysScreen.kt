@@ -25,16 +25,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.thernal.overlaykit.overlay.components.dialog.OverlayDialog
-import io.thernal.overlaykit.overlay.components.dropdown.OverlayDropdown
-import io.thernal.overlaykit.overlay.components.sheet.OverlayBottomSheet
-import io.thernal.overlaykit.overlay.components.showcase.OverlayShowcase
-import io.thernal.overlaykit.overlay.components.snackbar.LocalSnackbarManager
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarKind
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarMessage
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarPosition
-import io.thernal.overlaykit.overlay.components.theme.OverlayTheme
-import io.thernal.overlaykit.overlay.components.tooltip.OverlayTooltip
+import io.thernal.overlaykit.overlay.api.presentation.dialog.OverlayDialog
+import io.thernal.overlaykit.overlay.api.presentation.dropdown.OverlayDropdown
+import io.thernal.overlaykit.overlay.api.presentation.sheet.OverlayBottomSheet
+import io.thernal.overlaykit.overlay.api.presentation.showcase.OverlayShowcase
+import io.thernal.overlaykit.overlay.api.presentation.snackbar.LocalSnackbarManager
+import io.thernal.overlaykit.overlay.api.domain.snackbar.SnackbarKind
+import io.thernal.overlaykit.overlay.api.domain.snackbar.SnackbarMessage
+import io.thernal.overlaykit.overlay.api.domain.snackbar.SnackbarPosition
+import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayTheme
+import io.thernal.overlaykit.overlay.api.presentation.tooltip.OverlayTooltip
 
 private const val SHEET_ITEM_COUNT = 30
 

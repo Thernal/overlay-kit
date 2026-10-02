@@ -13,14 +13,14 @@ alias: overlaykit
 
 # Copied into the application and merged on update. The sample is not.
 code:
-  - overlay/core
-  - overlay/components
+  - overlay/api
+  - overlay/impl
+  - overlay/wiring
   - overlay/testing
 
 # The public contract — its source, not its README.
 surface:
-  - overlay/core/src/commonMain
-  - overlay/components/src/commonMain
+  - overlay/api/src
   - overlay/testing/src/commonMain
 
 # Installed into the application's skills directory, renamed like the code.
@@ -31,18 +31,21 @@ skill:
 docs:
   - README.md
   - overlay/README.md
-  - overlay/core/README.md
-  - overlay/components/README.md
+  - overlay/api/README.md
+  - overlay/impl/README.md
   - docs
 
 # What the copied modules expect the application to provide.
 requires:
   - plugin <alias>.kmp.library — Kotlin Multiplatform library (build-logic/convention: KmpLibraryConventionPlugin)
   - plugin <alias>.compose — kmp.library + Compose Multiplatform, runtime/foundation/ui as implementation (build-logic/convention: ComposeConventionPlugin)
+  - plugin <alias>.injection — Metro, for the wiring module (build-logic/convention: InjectionConventionPlugin)
   - targets android, iosArm64, iosSimulatorArm64 — the same set as the other kits
   - catalog compose-runtime, compose-foundation, compose-ui, compose-animation, compose-animation-core (compose-multiplatform = 1.12.0)
   - catalog navigationevent-compose (org.jetbrains.androidx.navigationevent:navigationevent-compose, navigationevent = 1.1.0 — the version Compose 1.12.0's ui uses)
   - catalog kotlinx-coroutines-core, kotlinx-coroutines-test (kotlinx-coroutines = 1.11.0), kotlin-test
-  - root the app's root composes OverlayTheme (optional) around OverlayHost around its content — or ProvideOverlays first and OverlayLayers last when providers sit between
+  - catalog metro-runtime, plugin metro (metro = 1.4.2)
+  - graph the app graph exposes Set<ProvidedValue<*>> and the root installs it with CompositionLocalProvider (arch-kit's ComponentLocals does) — or the root installs impl's overlayRenderers() by hand
+  - root inside the renderers' provider, the app's root composes OverlayTheme (optional) around OverlayHost around its content — or ProvideOverlays first and OverlayLayers last when providers sit between
   - android back reaches the overlays through the activity's dispatcher: a ComponentActivity, and android:enableOnBackInvokedCallback="true" for predictive back
   - settings enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS"), and each code part included as a module

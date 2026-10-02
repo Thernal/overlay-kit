@@ -7,7 +7,7 @@ description: Writes, reviews and debugs overlay code in Compose Multiplatform ap
 
 overlay-kit draws dialogs, sheets, menus, tooltips, snackbars and showcases from one host at the app's
 root, in the app's own composition, on foundation only (no Material). Guide:
-https://github.com/Thernal/overlay-kit — `overlay/components/README.md` (use), `overlay/core/README.md`
+https://github.com/Thernal/overlay-kit — `overlay/api/README.md` (use), `overlay/impl/README.md`
 (build on it), `overlay/README.md` (why).
 
 ## 1. Orient first
@@ -27,6 +27,9 @@ than hand edits.
 
 - A call site owns the state: `OverlayDialog(isVisible, onDismissRequest) { … }`. `onDismissRequest`
   (scrim, back, drag) must set `isVisible = false` — the overlay never hides itself.
+- Each overlay composable (`api`) calls a `…Renderer` from a CompositionLocal; `impl`'s renderers are
+  installed at the root by `OverlayWiring` (Metro) or `overlayRenderers()`. Not installed → previews only:
+  overlays never appear. Feature modules depend on `api` only.
 - The call site draws nothing; the plugin at the host does. **Overlay content is composed at the host**:
   a CompositionLocal provided between the host and the call site is invisible inside the overlay.
 - Looks come from `…Style` values, defaulting to `OverlayTheme.styles`; the app maps its tokens once in
@@ -44,7 +47,7 @@ than hand edits.
   `ProvideOverlays` … `OverlayLayers`.
 - A dropdown whose anchor is itself clickable: `isToggledByAnchor = false`, toggle from the anchor.
 - Strings screen readers hear are `OverlayStrings` — translate them in `OverlayStyles(strings = …)`.
-- A new kind of overlay is an `OverlayLayerPlugin` (`overlay/core/README.md`), not a component that
+- A new kind of overlay is an `OverlayLayerPlugin` (`overlay/impl/README.md`), not a component that
   draws itself in place.
 
 ## 4. Tasks
@@ -54,13 +57,14 @@ than hand edits.
 | install the host, the plugins, the styles; Android back | [references/setup.md](references/setup.md) |
 | a dialog, a sheet (lists inside, Navigation 3), a menu, a tooltip, a snackbar, a showcase | [references/usage.md](references/usage.md) |
 | previews and tests | [references/usage.md](references/usage.md) → Previews and tests |
-| an overlay of your own, anchored placement | `overlay/core/README.md` in the kit |
+| an overlay of your own, anchored placement | `overlay/impl/README.md` in the kit |
 
 ## 5. When it misbehaves
 
 | Symptom | Cause |
 |---|---|
-| `No DialogPlugin: wrap the app in OverlayHost.` | no host above the call (a second compose root, a test) |
+| `No DialogPlugin: wrap the app in OverlayHost.` | renderers installed but no host above the call (a second compose root) |
+| overlays never appear, anchors draw | renderers not installed — the root lacks `OverlayWiring` / `overlayRenderers()` |
 | the overlay ignores the app's theme or a local | that provider sits below the host — move it above |
 | the dropdown opens and closes at once | the anchor's own click toggles too — `isToggledByAnchor = false` |
 | back closes the screen, not the overlay | another back handler added later; or (Android) not a `ComponentActivity` |

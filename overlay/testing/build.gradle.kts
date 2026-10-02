@@ -6,8 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(projects.overlay.components)
-                implementation(libs.compose.runtime)
+                implementation(projects.overlay.api)
                 implementation(libs.kotlinx.coroutines.core)
             }
         }

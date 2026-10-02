@@ -27,6 +27,9 @@ androidx-activity = "1.13.0"
 # KotlinX
 kotlinx-coroutines = "1.11.0"
 
+# Dependency injection — Metro, for the wiring module and the sample's graph.
+metro = "1.4.2"
+
 # Static analysis
 detekt = "2.0.0-alpha.2"
 
@@ -62,6 +65,9 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 
+# Dependency injection
+metro-runtime = { module = "dev.zacsweers.metro:runtime", version.ref = "metro" }
+
 # Static analysis
 detekt-gradle-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 detekt-api = { module = "dev.detekt:detekt-api", version.ref = "detekt" }
@@ -76,8 +82,10 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 
 # Conventions (build-logic)
 overlaykit-kmp-library = { id = "io.thernal.overlaykit.kmp.library" }
 overlaykit-compose = { id = "io.thernal.overlaykit.compose" }
+overlaykit-injection = { id = "io.thernal.overlaykit.injection" }
 overlaykit-android-application = { id = "io.thernal.overlaykit.android.application" }

@@ -1,7 +1,7 @@
 package io.thernal.overlaykit.overlay.testing
 
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarManager
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarMessage
+import io.thernal.overlaykit.overlay.api.presentation.snackbar.SnackbarManager
+import io.thernal.overlaykit.overlay.api.domain.snackbar.SnackbarMessage
 
 /**
  * A [SnackbarManager] for tests: it shows nothing and keeps every message it was given, so a test

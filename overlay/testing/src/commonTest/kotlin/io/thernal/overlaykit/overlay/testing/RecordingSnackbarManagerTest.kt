@@ -1,7 +1,7 @@
 package io.thernal.overlaykit.overlay.testing
 
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarKind
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarMessage
+import io.thernal.overlaykit.overlay.api.domain.snackbar.SnackbarKind
+import io.thernal.overlaykit.overlay.api.domain.snackbar.SnackbarMessage
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

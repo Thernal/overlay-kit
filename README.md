@@ -6,15 +6,18 @@ by one host at the root of the app, in the app's own composition rather than in 
 
 ```kotlin
 @Composable
-fun AppRoot() {
-    OverlayTheme(styles = appOverlayStyles()) {       // the app's tokens, mapped once
-        OverlayHost {                                 // every overlay of the kit, stacked right
-            AppContent()
+fun AppRoot(graph: AppGraph) {
+    // The renderers, contributed by OverlayWiring to the graph's Set<ProvidedValue<*>>.
+    CompositionLocalProvider(*graph.compositionLocals.toTypedArray()) {
+        OverlayTheme(styles = appOverlayStyles()) {   // the app's tokens, mapped once
+            OverlayHost {                             // every overlay of the kit, stacked right
+                AppContent()
+            }
         }
     }
 }
 
-@Composable
+@Composable                                           // in a feature module: overlay/api only
 fun DeleteButton(onDelete: () -> Unit) {
     var isAsking by remember { mutableStateOf(false) }
     Button(onClick = { isAsking = true }) { Text("Delete") }
@@ -36,8 +39,8 @@ gesture, iOS's edge swipe — closes the top overlay.
 | Read | For |
 |---|---|
 | this file | what is here and how it is built |
-| [`overlay/components/README.md`](overlay/components/README.md) | using the overlays, task by task: the root, each overlay, styling, previews, tests |
-| [`overlay/core/README.md`](overlay/core/README.md) | the host underneath: writing an overlay plugin of your own, anchored placement, the modal lifecycle |
+| [`overlay/api/README.md`](overlay/api/README.md) | using the overlays, task by task: the root, each overlay, styling, previews, tests |
+| [`overlay/impl/README.md`](overlay/impl/README.md) | the host underneath: writing an overlay plugin of your own, anchored placement, the modal lifecycle |
 | [`overlay/README.md`](overlay/README.md) | why each part has its shape, and what changed from the app it came from |
 | [`skills/overlay-kit`](skills/overlay-kit/SKILL.md) | the same for an agent working in an app that uses the kit |
 
@@ -87,9 +90,10 @@ The same by hand, from a clone of this repository.
 
 | Module | Holds | Depends on |
 |---|---|---|
-| `overlay/core` | the plugin host (`OverlayPluginHost`, `OverlayLayerPlugin`, `OverlayLayers`), the backdrop, anchors, anchored placement (`AnchoredOverlay`), the modal lifecycle (`ModalOverlayState`), the scrim, back handling | Compose, navigationevent |
-| `overlay/components` | `OverlayHost` (every overlay installed), `OverlayDialog`, `OverlayBottomSheet`, `OverlayDropdown`, `OverlayTooltip`, `OverlayShowcase`, the snackbar (`SnackbarManager`), their plugins and styles, `OverlayTheme` | core, Compose |
-| `overlay/testing` | `RecordingSnackbarManager`, `ImmediateFrameClock` | components |
+| `overlay/api` | the contract: `OverlayHost`, `OverlayDialog`, `OverlayBottomSheet`, `OverlayDropdown`, `OverlayTooltip`, `OverlayShowcase`, each over a `…Renderer` in a CompositionLocal that previews it; the styles, `OverlayTheme`, `SnackbarMessage`, `LocalSnackbarManager`, `OverlayPlacement`, `OverlayLayerPlugin` | Compose |
+| `overlay/impl` | the renderers; the plugin host, backdrop, anchors, anchored placement (`AnchoredOverlay`), the modal lifecycle, the scrim, back handling; each overlay's plugin and host; the snackbar queue | api, Compose, navigationevent |
+| `overlay/wiring` | the renderers as `ProvidedValue`s in the app graph | api, impl, Metro |
+| `overlay/testing` | `RecordingSnackbarManager`, `InlineOverlayRenderers` (overlays drawn in place, for UI tests), `ImmediateFrameClock` | api |
 | `sample/shared`, `sample/android`, `sample/ios` | one screen with every overlay, and a switch to an app's mapped styles | the kit — never copied |
 
 ## Building

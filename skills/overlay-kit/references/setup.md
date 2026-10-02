@@ -2,9 +2,10 @@
 
 ## Modules
 
-`overlay/core` (host, placement, modal lifecycle), `overlay/components` (the six overlays, styles,
-snackbar manager), `overlay/testing` (test doubles). A feature module that shows overlays depends on
-`components`, and on `core` only for `OverlayPlacement` or its own plugins. Tests use `testing`.
+`overlay/api` (the overlays' composables, styles, `SnackbarManager` — each overlay a thin call to a
+`…Renderer` in a CompositionLocal), `overlay/impl` (the renderers, the host, placement, the modal
+lifecycle), `overlay/wiring` (Metro: the renderers into the graph's `Set<ProvidedValue<*>>`),
+`overlay/testing` (test doubles). A feature module depends on `api` only; the app module on `wiring`.
 
 The modules use Compose runtime, foundation, ui, animation and
 `org.jetbrains.androidx.navigationevent:navigationevent-compose` (1.1.0 with Compose Multiplatform
@@ -13,12 +14,16 @@ The modules use Compose runtime, foundation, ui, animation and
 ## The root
 
 ```kotlin
-AppTheme {
-    OverlayTheme(styles = appOverlayStyles()) {
-        OverlayHost { AppContent() }                 // extraPlugins = listOf(…) for the app's own overlays
+CompositionLocalProvider(*graph.compositionLocals.toTypedArray()) {   // OverlayWiring's renderers
+    AppTheme {
+        OverlayTheme(styles = appOverlayStyles()) {
+            OverlayHost { AppContent() }             // extraPlugins = listOf(…) for the app's own overlays
+        }
     }
 }
 ```
+
+Without Metro: `CompositionLocalProvider(*overlayRenderers().toTypedArray())` (`impl`).
 
 Every overlay of the kit is installed, in the order that stacks them right (the snackbar on top). When
 app-level providers must read the controllers (a ViewModel routing messages to `LocalSnackbarManager`)

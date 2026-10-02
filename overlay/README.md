@@ -43,7 +43,8 @@ The price is what a window does for free, which the host now does itself (D67):
 
 `OverlayLayerPlugin` has two halves because they live at opposite ends of the composition: `Provide`
 wraps the app's content (a controller in a CompositionLocal, so producers anywhere can register), and
-`Render` draws above it. The split between `ProvideOverlayControllers` and `OverlayLayers` follows: the
+`Render` draws above it. The split between `ProvideOverlays` and `OverlayLayers` (in `impl`, `ProvideOverlayControllers` and
+`OverlayPluginLayers`) follows: the
 controllers must be installed before any app-level provider that reads them, and the layers must come
 after anything overlay content needs, since overlay content is composed at the layers' position.
 

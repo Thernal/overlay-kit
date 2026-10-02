@@ -73,8 +73,11 @@ OverlayShowcase(
 
 ## Previews and tests
 
-- Previews need nothing: outside a host, dialogs and sheets draw their surface in place; anchored
-  overlays draw their anchor.
+- Previews need nothing: without renderers, dialogs and sheets draw their surface in place, anchored
+  overlays draw their anchor, `OverlayHost` draws the content.
+- UI tests of a screen: `CompositionLocalProvider(*InlineOverlayRenderers.values().toTypedArray())` draws
+  every overlay in place while visible — no host, no animation. A renderer of your own (`DialogRenderer`…)
+  in its `Local…Renderer` replaces one overlay.
 - Messages: `CompositionLocalProvider(LocalSnackbarManager provides RecordingSnackbarManager())` and
   assert `messages`.
 - Animations in a test: `runTest(context = ImmediateFrameClock()) { … }`.

@@ -5,7 +5,7 @@ for `dl.google.com` (a corporate proxy) — Gradle's JDK trusts neither that pro
 new Let's Encrypt chain for artifacts not yet in the cache. What ran there, green:
 
 - every module compiled for Android and for iOS (klibs), the sample's shared code included;
-- every test on the JVM host (34);
+- every test on the JVM host (37);
 - Detekt on every module, the sample's shared code included.
 
 What did not run:

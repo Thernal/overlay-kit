@@ -7,11 +7,8 @@ by one host at the root of the app, in the app's own composition rather than in 
 ```kotlin
 @Composable
 fun AppRoot() {
-    val plugins = remember {
-        listOf(BottomSheetPlugin(), DialogPlugin(), DropdownPlugin(), ShowcasePlugin(), TooltipPlugin(), SnackbarPlugin())
-    }
     OverlayTheme(styles = appOverlayStyles()) {       // the app's tokens, mapped once
-        OverlayHost(plugins = plugins) {
+        OverlayHost {                                 // every overlay of the kit, stacked right
             AppContent()
         }
     }
@@ -90,8 +87,8 @@ The same by hand, from a clone of this repository.
 
 | Module | Holds | Depends on |
 |---|---|---|
-| `overlay/core` | the host (`OverlayHost`, `OverlayLayerPlugin`), the backdrop, anchors, anchored placement (`AnchoredOverlay`), the modal lifecycle (`ModalOverlayState`), the scrim, back handling | Compose, navigationevent |
-| `overlay/components` | `OverlayDialog`, `OverlayBottomSheet`, `OverlayDropdown`, `OverlayTooltip`, `OverlayShowcase`, the snackbar (`SnackbarManager`), their plugins and styles, `OverlayTheme` | core, Compose |
+| `overlay/core` | the plugin host (`OverlayPluginHost`, `OverlayLayerPlugin`, `OverlayLayers`), the backdrop, anchors, anchored placement (`AnchoredOverlay`), the modal lifecycle (`ModalOverlayState`), the scrim, back handling | Compose, navigationevent |
+| `overlay/components` | `OverlayHost` (every overlay installed), `OverlayDialog`, `OverlayBottomSheet`, `OverlayDropdown`, `OverlayTooltip`, `OverlayShowcase`, the snackbar (`SnackbarManager`), their plugins and styles, `OverlayTheme` | core, Compose |
 | `overlay/testing` | `RecordingSnackbarManager`, `ImmediateFrameClock` | components |
 | `sample/shared`, `sample/android`, `sample/ios` | one screen with every overlay, and a switch to an app's mapped styles | the kit — never copied |
 

@@ -23,7 +23,7 @@ internal class TooltipEntry(
 )
 
 internal val LocalTooltipController = staticCompositionLocalOf<OverlayStackEntryController<TooltipEntry>> {
-    error("No TooltipPlugin: add TooltipPlugin() to OverlayHost's plugins.")
+    error("No TooltipPlugin: wrap the app in OverlayHost.")
 }
 
 /** Draws `OverlayTooltip` balloons next to their anchors. */

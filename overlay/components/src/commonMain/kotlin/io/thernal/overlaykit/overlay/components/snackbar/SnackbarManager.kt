@@ -20,5 +20,5 @@ interface SnackbarManager {
 }
 
 val LocalSnackbarManager = staticCompositionLocalOf<SnackbarManager> {
-    error("No SnackbarPlugin: add SnackbarPlugin() to OverlayHost's plugins.")
+    error("No SnackbarPlugin: wrap the app in OverlayHost.")
 }

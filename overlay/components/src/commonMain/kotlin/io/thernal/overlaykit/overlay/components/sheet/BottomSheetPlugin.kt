@@ -21,11 +21,11 @@ internal class BottomSheetEntry(
 )
 
 internal val LocalBottomSheetController = staticCompositionLocalOf<OverlayStackEntryController<BottomSheetEntry>> {
-    error("No BottomSheetPlugin: add BottomSheetPlugin() to OverlayHost's plugins.")
+    error("No BottomSheetPlugin: wrap the app in OverlayHost.")
 }
 
 private val LocalBottomSheetState = staticCompositionLocalOf<BottomSheetState> {
-    error("No BottomSheetPlugin: add BottomSheetPlugin() to OverlayHost's plugins.")
+    error("No BottomSheetPlugin: wrap the app in OverlayHost.")
 }
 
 private const val BOTTOM_SHEET_BACKDROP_OWNER = "bottomsheet"

@@ -4,7 +4,8 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 
 /**
- * One kind of overlay — dialogs, sheets, tooltips — drawn by [OverlayHost].
+ * One kind of overlay — dialogs, sheets, tooltips — drawn by the components' `OverlayHost` or by
+ * [OverlayPluginHost].
  *
  * A plugin has two halves that live at opposite ends of the composition: [Provide] wraps the app's
  * content and installs whatever the overlay's producers need (a controller in a CompositionLocal),

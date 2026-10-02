@@ -43,6 +43,6 @@ requires:
   - catalog compose-runtime, compose-foundation, compose-ui, compose-animation, compose-animation-core (compose-multiplatform = 1.12.0)
   - catalog navigationevent-compose (org.jetbrains.androidx.navigationevent:navigationevent-compose, navigationevent = 1.1.0 — the version Compose 1.12.0's ui uses)
   - catalog kotlinx-coroutines-core, kotlinx-coroutines-test (kotlinx-coroutines = 1.11.0), kotlin-test
-  - root the app's root composes OverlayTheme (optional) around OverlayHost(plugins) around its content — or ProvideOverlayControllers first and OverlayLayers last when providers sit between
+  - root the app's root composes OverlayTheme (optional) around OverlayHost around its content — or ProvideOverlays first and OverlayLayers last when providers sit between
   - android back reaches the overlays through the activity's dispatcher: a ComponentActivity, and android:enableOnBackInvokedCallback="true" for predictive back
   - settings enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS"), and each code part included as a module

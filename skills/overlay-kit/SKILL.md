@@ -13,8 +13,7 @@ https://github.com/Thernal/overlay-kit — `overlay/components/README.md` (use),
 ## 1. Orient first
 
 ```sh
-grep -rn --include=*.kt -e "OverlayHost(" -e "ProvideOverlayControllers(" -e "OverlayLayers(" .   # the root
-grep -rn --include=*.kt -e "Plugin()" . | grep -i -e overlay -e dialog -e sheet -e snackbar | head   # installed plugins
+grep -rn --include=*.kt -e "OverlayHost" -e "ProvideOverlays(" -e "OverlayLayers(" .   # the root, extraPlugins
 grep -rn --include=*.kt -e "OverlayStyles(" -e "OverlayTheme(" .                              # token mapping
 grep -rn --include=*.kt -e "OverlayDialog(" -e "OverlayBottomSheet(" -e "LocalSnackbarManager" . | head  # call sites to copy
 ```
@@ -40,9 +39,9 @@ than hand edits.
 
 - Never wrap an overlay in `Popup`/`Dialog`, and never use Material's for the same job in this app —
   mixed stacks draw in the wrong order and lose the backdrop.
-- Install each plugin the app uses in the host's list, and `remember` the list.
+- `OverlayHost` installs all six; an app's own overlay joins with `extraPlugins`, never a second host.
 - Providers overlay content needs (theme, strings) go **above** `OverlayHost` — or split it into
-  `ProvideOverlayControllers` … `OverlayLayers`.
+  `ProvideOverlays` … `OverlayLayers`.
 - A dropdown whose anchor is itself clickable: `isToggledByAnchor = false`, toggle from the anchor.
 - Strings screen readers hear are `OverlayStrings` — translate them in `OverlayStyles(strings = …)`.
 - A new kind of overlay is an `OverlayLayerPlugin` (`overlay/core/README.md`), not a component that
@@ -61,7 +60,7 @@ than hand edits.
 
 | Symptom | Cause |
 |---|---|
-| `No DialogPlugin: add DialogPlugin() …` | the plugin is not in the host's list |
+| `No DialogPlugin: wrap the app in OverlayHost.` | no host above the call (a second compose root, a test) |
 | the overlay ignores the app's theme or a local | that provider sits below the host — move it above |
 | the dropdown opens and closes at once | the anchor's own click toggles too — `isToggledByAnchor = false` |
 | back closes the screen, not the overlay | another back handler added later; or (Android) not a `ComponentActivity` |

@@ -24,7 +24,7 @@ internal class ShowcaseEntry(
 )
 
 internal val LocalShowcaseController = staticCompositionLocalOf<OverlayStackEntryController<ShowcaseEntry>> {
-    error("No ShowcasePlugin: add ShowcasePlugin() to OverlayHost's plugins.")
+    error("No ShowcasePlugin: wrap the app in OverlayHost.")
 }
 
 /** Draws `OverlayShowcase`s: the screen dimmed around one element, a balloon pointing at it. */

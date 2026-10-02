@@ -22,11 +22,11 @@ internal class DialogEntry(
 )
 
 internal val LocalDialogController = staticCompositionLocalOf<OverlayStackEntryController<DialogEntry>> {
-    error("No DialogPlugin: add DialogPlugin() to OverlayHost's plugins.")
+    error("No DialogPlugin: wrap the app in OverlayHost.")
 }
 
 private val LocalDialogState = staticCompositionLocalOf<AnimatedModalOverlayState<DialogEntry>> {
-    error("No DialogPlugin: add DialogPlugin() to OverlayHost's plugins.")
+    error("No DialogPlugin: wrap the app in OverlayHost.")
 }
 
 /** Draws `OverlayDialog`s: the most recently shown one on top, over a scrim. */

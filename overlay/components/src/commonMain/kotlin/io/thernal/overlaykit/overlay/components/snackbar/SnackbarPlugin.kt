@@ -11,7 +11,7 @@ import io.thernal.overlaykit.overlay.components.theme.OverlayTheme
 import io.thernal.overlaykit.overlay.core.host.OverlayLayerPlugin
 
 private val LocalSnackbarController = staticCompositionLocalOf<SnackbarController> {
-    error("No SnackbarPlugin: add SnackbarPlugin() to OverlayHost's plugins.")
+    error("No SnackbarPlugin: wrap the app in OverlayHost.")
 }
 
 /**

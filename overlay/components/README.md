@@ -8,19 +8,9 @@ it. Why it is built this way: [`../README.md`](../README.md).
 ```kotlin
 @Composable
 fun AppRoot() {
-    val plugins = remember {
-        listOf(
-            BottomSheetPlugin(),
-            DialogPlugin(),
-            DropdownPlugin(),
-            ShowcasePlugin(),
-            TooltipPlugin(),
-            SnackbarPlugin(),
-        )
-    }
     AppTheme {                                   // anything overlay content reads goes ABOVE the host
         OverlayTheme(styles = appOverlayStyles()) {
-            OverlayHost(plugins = plugins) {
+            OverlayHost {
                 AppContent()
             }
         }
@@ -28,13 +18,12 @@ fun AppRoot() {
 }
 ```
 
-- The plugin list's order is the drawing order, bottom to top. Install only the plugins you use; an
-  overlay whose plugin is missing fails at once with the plugin's name.
-- `remember` the list: a new list each recomposition re-validates the plugins.
+- `OverlayHost` installs every overlay of the kit, stacked bottom to top: sheets, dialogs, dropdowns,
+  showcases, tooltips, then the app's own (`extraPlugins = listOf(BannerPlugin())`), and the snackbar
+  last. An overlay used outside a host fails at once with its plugin's name.
 - **Overlay content is composed at the host**, not at the call site. A CompositionLocal provided between
   the host and the call site (a screen's own theme, a ViewModel store) is not visible inside the overlay.
-  Provide it above the host, or split the host: `ProvideOverlayControllers(plugins) { …providers…
-  OverlayLayers { content } }`.
+  Provide it above the host, or split the host: `ProvideOverlays { …providers… OverlayLayers { content } }`.
 - `OverlayHost(backdrop = OverlayBackdropStyle.None)` keeps the content still behind sheets.
 
 ## Styling

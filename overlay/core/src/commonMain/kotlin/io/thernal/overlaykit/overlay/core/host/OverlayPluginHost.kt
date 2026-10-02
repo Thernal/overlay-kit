@@ -33,7 +33,8 @@ private val LocalOverlayPlugins = staticCompositionLocalOf<List<OverlayLayerPlug
 }
 
 /**
- * Draws [plugins]' overlays above [content] — one call at the root of the app.
+ * Draws [plugins]' overlays above [content]. Apps normally call the components' `OverlayHost`, which
+ * installs the kit's overlays itself; this one is for a host with only the plugins given.
  *
  * It is [ProvideOverlayControllers] and [OverlayLayers] together. Split them when other app-level
  * providers sit between the two: the controllers must be installed before anything that reads them
@@ -42,7 +43,7 @@ private val LocalOverlayPlugins = staticCompositionLocalOf<List<OverlayLayerPlug
  * provided below them is invisible to it.
  */
 @Composable
-fun OverlayHost(
+fun OverlayPluginHost(
     plugins: List<OverlayLayerPlugin>,
     modifier: Modifier = Modifier,
     backdrop: OverlayBackdropStyle = OverlayBackdropStyle(),

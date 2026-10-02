@@ -13,22 +13,19 @@ The modules use Compose runtime, foundation, ui, animation and
 ## The root
 
 ```kotlin
-val plugins = remember {
-    listOf(BottomSheetPlugin(), DialogPlugin(), DropdownPlugin(), ShowcasePlugin(), TooltipPlugin(), SnackbarPlugin())
-}
 AppTheme {
     OverlayTheme(styles = appOverlayStyles()) {
-        OverlayHost(plugins = plugins) { AppContent() }
+        OverlayHost { AppContent() }                 // extraPlugins = listOf(…) for the app's own overlays
     }
 }
 ```
 
-List order is drawing order, bottom to top. When app-level providers must read the controllers (a
-ViewModel routing messages to `LocalSnackbarManager`) and overlay content must see providers installed
-after them, split the host:
+Every overlay of the kit is installed, in the order that stacks them right (the snackbar on top). When
+app-level providers must read the controllers (a ViewModel routing messages to `LocalSnackbarManager`)
+and overlay content must see providers installed after them, split the host:
 
 ```kotlin
-ProvideOverlayControllers(plugins) {
+ProvideOverlays {
     AppProviders {
         OverlayLayers { AppContent() }
     }

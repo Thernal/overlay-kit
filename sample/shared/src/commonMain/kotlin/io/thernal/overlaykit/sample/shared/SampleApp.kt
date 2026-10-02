@@ -21,33 +21,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.thernal.overlaykit.overlay.components.dialog.DialogPlugin
-import io.thernal.overlaykit.overlay.components.dropdown.DropdownPlugin
-import io.thernal.overlaykit.overlay.components.sheet.BottomSheetPlugin
-import io.thernal.overlaykit.overlay.components.showcase.ShowcasePlugin
-import io.thernal.overlaykit.overlay.components.snackbar.SnackbarPlugin
+import io.thernal.overlaykit.overlay.components.host.OverlayHost
 import io.thernal.overlaykit.overlay.components.theme.OverlayStyles
 import io.thernal.overlaykit.overlay.components.theme.OverlayTheme
-import io.thernal.overlaykit.overlay.components.tooltip.TooltipPlugin
-import io.thernal.overlaykit.overlay.core.host.OverlayHost
 
 /**
- * The sample's root, as an application's root would be: the overlay theme, then the host with
- * every plugin, then the screen. Material is the sample's own UI kit; the overlays do not use it.
+ * The sample's root, as an application's root would be: the overlay theme, then the host, then
+ * the screen. Material is the sample's own UI kit; the overlays do not use it.
  */
 @Composable
 fun SampleApp() {
     var isBranded by remember { mutableStateOf(false) }
-    val plugins = remember {
-        listOf(
-            BottomSheetPlugin(),
-            DialogPlugin(),
-            DropdownPlugin(),
-            ShowcasePlugin(),
-            TooltipPlugin(),
-            SnackbarPlugin(),
-        )
-    }
 
     MaterialTheme {
         OverlayTheme(
@@ -57,7 +41,7 @@ fun SampleApp() {
                 OverlayStyles()
             },
         ) {
-            OverlayHost(plugins = plugins) {
+            OverlayHost {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Column(
                         modifier = Modifier

@@ -3,6 +3,10 @@
 What the six overlays are made of, for an app that needs a seventh. Using the six:
 [`../components/README.md`](../components/README.md).
 
+An app's own plugin joins the kit's through the components' host:
+`OverlayHost(extraPlugins = listOf(BannerPlugin())) { … }`. A host with only the plugins given — none
+of the kit's overlays — is `OverlayPluginHost(plugins) { … }`.
+
 ## A plugin
 
 ```kotlin

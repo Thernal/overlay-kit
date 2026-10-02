@@ -24,7 +24,7 @@ internal class DropdownEntry(
 )
 
 internal val LocalDropdownController = staticCompositionLocalOf<OverlayStackEntryController<DropdownEntry>> {
-    error("No DropdownPlugin: add DropdownPlugin() to OverlayHost's plugins.")
+    error("No DropdownPlugin: wrap the app in OverlayHost.")
 }
 
 /**

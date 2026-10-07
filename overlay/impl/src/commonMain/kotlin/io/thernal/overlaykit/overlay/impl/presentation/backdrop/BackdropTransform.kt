@@ -9,8 +9,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import io.thernal.overlaykit.overlay.api.presentation.backdrop.OverlayBackdropStyle
 
-private val BACKDROP_TRANSFORM_ORIGIN = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f)
-
 /**
  * Pushes the content back by [progress] as [style] describes. Everything is read inside the layer
  * block, so an animating progress redraws the layer without recomposing or relaying out the content.
@@ -39,3 +37,5 @@ internal fun Modifier.backdropTransform(
         transformOrigin = BACKDROP_TRANSFORM_ORIGIN
     }
 }
+
+private val BACKDROP_TRANSFORM_ORIGIN = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f)

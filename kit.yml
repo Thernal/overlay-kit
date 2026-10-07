@@ -45,7 +45,8 @@ requires:
   - catalog navigationevent-compose (org.jetbrains.androidx.navigationevent:navigationevent-compose, navigationevent = 1.1.0 — the version Compose 1.12.0's ui uses)
   - catalog kotlinx-coroutines-core, kotlinx-coroutines-test (kotlinx-coroutines = 1.11.0), kotlin-test
   - catalog metro-runtime, plugin metro (metro = 1.4.2)
-  - graph the app graph exposes Set<ProvidedValue<*>> and the root installs it with CompositionLocalProvider (arch-kit's ComponentLocals does) — or the root installs impl's overlayRenderers() by hand
-  - root inside the renderers' provider, the app's root composes OverlayTheme (optional) around OverlayHost around its content — or ProvideOverlays first and OverlayLayers last when providers sit between
+  - graph the app graph exposes Set<ProvidedValue<*>> and the root installs it with CompositionLocalProvider (arch-kit's ContributedLocals does) — or the root installs impl's overlayRenderers() by hand
+  - styles the app maps its design system's tokens onto OverlayStyles in one file of its own design-system module and installs OverlayTheme(styles = …) at the root; the kit's defaults are neutral fallbacks for previews and tests, and kit code is never edited to restyle
+  - root inside the renderers' provider, the app's root composes OverlayTheme around OverlayHost around its content — or ProvideOverlays first and OverlayLayers last when providers sit between
   - android back reaches the overlays through the activity's dispatcher: a ComponentActivity, and android:enableOnBackInvokedCallback="true" for predictive back
   - settings enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS"), and each code part included as a module

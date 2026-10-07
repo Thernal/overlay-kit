@@ -3,17 +3,15 @@ package io.thernal.overlaykit.overlay.impl.presentation.tooltip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import io.thernal.overlaykit.overlay.api.domain.placement.OverlayPlacement
-
-internal enum class TooltipSharpCorner { TopStart, TopEnd, BottomStart, BottomEnd }
 
 internal class TooltipShape(
     private val cornerRadiusPx: Float,

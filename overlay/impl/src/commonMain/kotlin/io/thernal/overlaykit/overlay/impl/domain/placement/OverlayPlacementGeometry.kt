@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import io.thernal.overlaykit.overlay.api.domain.placement.OverlayPlacement
 
 /**
- * Single source of truth for anchored-overlay geometry. Both [DefaultOverlayPlacementResolver]
+ * Single source of truth for anchored-overlay geometry. Both [OverlayPlacementResolverImpl]
  * and [OverlayPositionCalculator] derive positions from here; the caret shift in the calculator
  * is only correct while both sides share the same raw-position math.
  */

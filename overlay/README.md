@@ -39,6 +39,16 @@ The price is what a window does for free, which the host now does itself (D67):
 | give focus back | `restoreFocusedChild()` when the last modal closes |
 | handle back | `OverlayBackHandler` on navigationevent, added only while the overlay is up so it outranks screens composed earlier |
 
+## Looks belong to the app's design system
+
+The kit owns behaviour — placement, gestures, back, focus, the modal lifecycle — and none of the look.
+Every colour, shape, padding, text style and duration an overlay draws is a field of its `…Style`, read
+from `OverlayTheme.styles`, so one file in the app's design system decides them all and a kit update
+never changes how an app looks. The defaults are neutral (a light surface, a soft border) because
+previews and tests need something, not because they are a design. A design system shipped in the kit's
+`code` would be merged into every app's own on update — the opposite of what an app's look needs — so
+the kit's example lives in `sample/designsystem`, which nothing copies.
+
 ## Plugins
 
 `OverlayLayerPlugin` has two halves because they live at opposite ends of the composition: `Provide`

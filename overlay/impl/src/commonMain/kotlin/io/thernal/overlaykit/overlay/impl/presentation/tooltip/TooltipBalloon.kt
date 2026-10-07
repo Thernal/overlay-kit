@@ -47,9 +47,54 @@ internal fun TooltipBalloon(
     content: @Composable () -> Unit,
 ) {
     val layoutState = remember(anchorId) { AnchoredOverlayState() }
+    val animation = rememberBalloonAnimation(
+        anchorId = anchorId,
+        showKey = showKey,
+        isVisible = isVisible,
+        style = style,
+    )
+
+    AnchoredOverlay(
+        anchorId = anchorId,
+        preferredPlacement = placement,
+        edgeMargin = style.edgeMargin,
+        anchorSpacing = style.anchorSpacing,
+        modifier = Modifier.fillMaxSize(),
+        state = layoutState,
+        animation = animation,
+        caretInset = if (style.caret.isEnabled) {
+            style.caret.height
+        } else {
+            0.dp
+        },
+        chrome = { Spacer(modifier = Modifier.balloonChrome(layoutState = layoutState, style = style)) },
+    ) {
+        Box(
+            modifier = Modifier
+                // Taps on the balloon stay on it; the dismiss catcher behind must not see them.
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {})
+                }
+                .semantics {
+                    liveRegion = LiveRegionMode.Polite
+                }
+                .padding(style.contentPadding),
+        ) {
+            content()
+        }
+    }
+}
+
+/** Pops in from the caret's tip while [isVisible], fades out after; a new [showKey] restarts the pop. */
+@Composable
+private fun rememberBalloonAnimation(
+    anchorId: OverlayAnchorId,
+    showKey: Any?,
+    isVisible: Boolean,
+    style: TooltipStyle,
+): AnchoredOverlayAnimation {
     val alpha = remember(key1 = anchorId, key2 = showKey) { Animatable(initialValue = 0f) }
     val scale = remember(key1 = anchorId, key2 = showKey) { Animatable(initialValue = style.initialScale) }
-
     LaunchedEffect(key1 = alpha, key2 = scale, key3 = isVisible) {
         if (isVisible) {
             launch {
@@ -70,62 +115,36 @@ internal fun TooltipBalloon(
             scale.animateTo(targetValue = style.initialScale, animationSpec = exit)
         }
     }
-    val animation = remember(key1 = alpha, key2 = scale) {
+    return remember(key1 = alpha, key2 = scale) {
         AnchoredOverlayAnimation(
             alpha = { alpha.value },
             scale = { scale.value },
         )
     }
+}
 
-    AnchoredOverlay(
-        anchorId = anchorId,
-        preferredPlacement = placement,
-        edgeMargin = style.edgeMargin,
-        anchorSpacing = style.anchorSpacing,
-        modifier = Modifier.fillMaxSize(),
-        state = layoutState,
-        animation = animation,
-        caretInset = if (style.caret.isEnabled) {
-            style.caret.height
-        } else {
-            0.dp
-        },
-        chrome = {
-            Spacer(
-                modifier = Modifier.drawBehind {
-                    val position = layoutState.position ?: return@drawBehind
-                    val outline = TooltipShape(
-                        cornerRadiusPx = style.cornerRadius.toPx(),
-                        caretWidthPx = style.caret.width.toPx(),
-                        caretHeightPx = style.caret.height.toPx(),
-                        caretEdge = position.placement.toCaretEdge(isEnabled = style.caret.isEnabled),
-                        caretCenterOffsetPx = position.caretCenterOffsetPx,
-                        sharpCorner = position.placement.toSharpCorner(),
-                    ).createOutline(size = size, layoutDirection = layoutDirection, density = this)
-                    drawOutline(outline = outline, color = style.containerColor)
-                    if (style.borderWidth.toPx() > 0f) {
-                        drawOutline(
-                            outline = outline,
-                            color = style.borderColor,
-                            style = Stroke(width = style.borderWidth.toPx()),
-                        )
-                    }
-                },
+/** The balloon and its caret, drawn for the placement the layout resolved — read here, in draw. */
+private fun Modifier.balloonChrome(
+    layoutState: AnchoredOverlayState,
+    style: TooltipStyle,
+): Modifier {
+    return drawBehind {
+        val position = layoutState.position ?: return@drawBehind
+        val outline = TooltipShape(
+            cornerRadiusPx = style.cornerRadius.toPx(),
+            caretWidthPx = style.caret.width.toPx(),
+            caretHeightPx = style.caret.height.toPx(),
+            caretEdge = position.placement.toCaretEdge(isEnabled = style.caret.isEnabled),
+            caretCenterOffsetPx = position.caretCenterOffsetPx,
+            sharpCorner = position.placement.toSharpCorner(),
+        ).createOutline(size = size, layoutDirection = layoutDirection, density = this)
+        drawOutline(outline = outline, color = style.containerColor)
+        if (style.borderWidth.toPx() > 0f) {
+            drawOutline(
+                outline = outline,
+                color = style.borderColor,
+                style = Stroke(width = style.borderWidth.toPx()),
             )
-        },
-    ) {
-        Box(
-            modifier = Modifier
-                // Taps on the balloon stay on it; the dismiss catcher behind must not see them.
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {})
-                }
-                .semantics {
-                    liveRegion = LiveRegionMode.Polite
-                }
-                .padding(style.contentPadding),
-        ) {
-            content()
         }
     }
 }

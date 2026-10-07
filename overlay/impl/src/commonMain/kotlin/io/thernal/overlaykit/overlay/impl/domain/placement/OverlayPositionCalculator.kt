@@ -108,39 +108,53 @@ class OverlayPositionCalculator(
             OverlayPlacement.TopEnd,
             OverlayPlacement.BottomStart,
             OverlayPlacement.BottomEnd,
-            -> {
-                val doesVerticalFit =
-                    raw.y >= edgeMarginPx && raw.y + popupContentSize.height <= windowSize.height - edgeMarginPx
-                if (!doesVerticalFit) {
-                    null
-                } else {
-                    val clampedX = OverlayPlacementGeometry.clampX(
-                        x = raw.x,
-                        popupWidth = popupContentSize.width,
-                        windowWidth = windowSize.width,
-                        edgeMargin = edgeMarginPx,
-                    )
-                    placement to IntOffset(x = clampedX, y = raw.y)
-                }
-            }
+            -> pinnedAboveOrBelow(raw = raw, windowSize = windowSize, popupContentSize = popupContentSize)
+                ?.let { offset -> placement to offset }
 
             OverlayPlacement.Start,
             OverlayPlacement.End,
-            -> {
-                val doesHorizontalFit =
-                    raw.x >= edgeMarginPx && raw.x + popupContentSize.width <= windowSize.width - edgeMarginPx
-                if (!doesHorizontalFit) {
-                    null
-                } else {
-                    val clampedY = OverlayPlacementGeometry.clampY(
-                        y = raw.y,
-                        popupHeight = popupContentSize.height,
-                        windowHeight = windowSize.height,
-                        edgeMargin = edgeMarginPx,
-                    )
-                    placement to IntOffset(x = raw.x, y = clampedY)
-                }
-            }
+            -> pinnedBeside(raw = raw, windowSize = windowSize, popupContentSize = popupContentSize)
+                ?.let { offset -> placement to offset }
         }
+    }
+
+    /** Above or below: kept if it fits vertically, slid horizontally into the window. */
+    private fun pinnedAboveOrBelow(
+        raw: IntOffset,
+        windowSize: IntSize,
+        popupContentSize: IntSize,
+    ): IntOffset? {
+        val doesVerticalFit =
+            raw.y >= edgeMarginPx && raw.y + popupContentSize.height <= windowSize.height - edgeMarginPx
+        if (!doesVerticalFit) {
+            return null
+        }
+        val clampedX = OverlayPlacementGeometry.clampX(
+            x = raw.x,
+            popupWidth = popupContentSize.width,
+            windowWidth = windowSize.width,
+            edgeMargin = edgeMarginPx,
+        )
+        return IntOffset(x = clampedX, y = raw.y)
+    }
+
+    /** Beside: kept if it fits horizontally, slid vertically into the window. */
+    private fun pinnedBeside(
+        raw: IntOffset,
+        windowSize: IntSize,
+        popupContentSize: IntSize,
+    ): IntOffset? {
+        val doesHorizontalFit =
+            raw.x >= edgeMarginPx && raw.x + popupContentSize.width <= windowSize.width - edgeMarginPx
+        if (!doesHorizontalFit) {
+            return null
+        }
+        val clampedY = OverlayPlacementGeometry.clampY(
+            y = raw.y,
+            popupHeight = popupContentSize.height,
+            windowHeight = windowSize.height,
+            edgeMargin = edgeMarginPx,
+        )
+        return IntOffset(x = raw.x, y = clampedY)
     }
 }

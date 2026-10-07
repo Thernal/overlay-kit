@@ -15,7 +15,7 @@ import io.thernal.overlaykit.overlay.impl.presentation.host.overlayRenderers
  */
 @BindingContainer
 @ContributesTo(AppScope::class)
-interface OverlayWiring {
+interface OverlayProvidersModule {
     companion object {
         @Provides
         @ElementsIntoSet

@@ -12,11 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.thernal.overlaykit.overlay.impl.presentation.modal.ModalOverlayState
 
-internal enum class SheetValue {
-    Hidden,
-    Expanded,
-}
-
 /**
  * A sheet's lifecycle on top of foundation's [AnchoredDraggableState]: two anchors — expanded at 0,
  * hidden at the sheet's height — and the drag, the fling, the nested scroll and the show and hide

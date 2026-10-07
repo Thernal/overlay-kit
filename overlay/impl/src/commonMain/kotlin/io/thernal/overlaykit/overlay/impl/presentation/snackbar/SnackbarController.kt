@@ -17,8 +17,6 @@ import kotlinx.coroutines.launch
 
 // Shorter than the exit animation on purpose: the queue moves on while the previous message is
 // still sliding out, so the next one enters during the exit instead of after it.
-private const val DISMISS_ANIMATION_DELAY_MILLIS = 300L
-private const val QUEUE_DELAY_MILLIS = 100L
 
 /**
  * The queue behind [SnackbarManager]. Commands are processed in order by [run], which the plugin
@@ -165,3 +163,6 @@ private sealed interface SnackbarCommand {
 
     class Dismiss(val target: SnackbarMessage?) : SnackbarCommand
 }
+
+private const val DISMISS_ANIMATION_DELAY_MILLIS = 300L
+private const val QUEUE_DELAY_MILLIS = 100L

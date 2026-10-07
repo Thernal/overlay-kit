@@ -8,7 +8,7 @@ it. Why it is built this way: [`../README.md`](../README.md).
 ```kotlin
 @Composable
 fun AppRoot(graph: AppGraph) {
-    // The renderers — OverlayWiring contributes them to the graph's Set<ProvidedValue<*>>.
+    // The renderers — OverlayProvidersModule contributes them to the graph's Set<ProvidedValue<*>>.
     CompositionLocalProvider(*graph.compositionLocals.toTypedArray()) {
         AppTheme {                               // anything overlay content reads goes ABOVE the host
             OverlayTheme(styles = appOverlayStyles()) {
@@ -32,25 +32,47 @@ Without a DI graph, install `impl`'s `overlayRenderers()` the same way. A featur
   Provide it above the host, or split the host: `ProvideOverlays { …providers… OverlayLayers { content } }`.
 - `OverlayHost(backdrop = OverlayBackdropStyle.None)` keeps the content still behind sheets.
 
-## Styling
+## Styling from your design system
 
-Every overlay takes a `style`; its default comes from `OverlayTheme.styles`. Map the app's tokens once:
+The kit decides how overlays behave — placement, gestures, back, focus, the modal lifecycle. How they
+**look** is the app's design system's, entirely: colours, shapes, spacing, text styles, durations. Every
+overlay takes a `style`, defaulting to `OverlayTheme.styles`, and the app fills `OverlayStyles` from its
+own tokens, once:
+
+- **One file, in the app's design-system module** — `designsystem/…/overlay/AppOverlayStyles.kt`, a
+  `@Composable fun appOverlayStyles(): OverlayStyles` that reads the design system's theme. It is the
+  app's code: no kit update touches it.
+- **Installed at the root**, inside the design system's theme and above `OverlayHost`:
+  `AppTheme { OverlayTheme(styles = appOverlayStyles()) { OverlayHost { … } } }`.
+- **Never restyle by editing the kit.** A one-off look is a `style =` at the call site; everything else
+  is the mapping. The kit's defaults are neutral fallbacks — for previews, tests and the first build — not
+  a design.
+- **Map looks, keep behaviour.** Thresholds, auto-dismiss delays and insets keep the kit's defaults unless
+  the app means to change how an overlay works.
+
+`sample/designsystem` is a small design system wired exactly like this — tokens in `SampleTheme`, the
+mapping in `overlay/SampleOverlayStyles.kt` — to read, not to copy as is: an app maps its own tokens.
 
 ```kotlin
-fun appOverlayStyles(tokens: AppTokens) = OverlayStyles(
-    dialog = DialogStyle(containerColor = tokens.surface, borderColor = tokens.outline, shape = tokens.shapeLarge),
-    bottomSheet = BottomSheetStyle(containerColor = tokens.surface, dragHandleColor = tokens.outline),
-    dropdown = DropdownStyle(containerColor = tokens.surfaceRaised),
-    tooltip = TooltipStyle(containerColor = tokens.inverseSurface),
-    snackbar = SnackbarStyle(
-        containerColor = tokens.surface,
-        contentColor = tokens.onSurface,
-        textStyle = tokens.label,
-        tones = SnackbarTones(success = tokens.success, error = tokens.error, warning = tokens.warning, info = tokens.info),
-        icons = SnackbarIcons(success = AppIcons.CheckCircle, error = AppIcons.Error),
-    ),
-    strings = OverlayStrings(dismiss = stringResource(Res.string.dismiss), dialogPane = …),
-)
+@Composable
+fun appOverlayStyles(): OverlayStyles {
+    val tokens = AppTheme.tokens
+    return OverlayStyles(
+        dialog = DialogStyle(containerColor = tokens.surface, borderColor = tokens.outline, shape = tokens.shapeLarge),
+        bottomSheet = BottomSheetStyle(containerColor = tokens.surface, dragHandleColor = tokens.outline),
+        dropdown = DropdownStyle(containerColor = tokens.surfaceRaised),
+        tooltip = TooltipStyle(containerColor = tokens.inverseSurface),
+        snackbar = SnackbarStyle(
+            containerColor = tokens.surface,
+            contentColor = tokens.onSurface,
+            textStyle = tokens.label,
+            tones = SnackbarTones(success = tokens.success, error = tokens.error, warning = tokens.warning, info = tokens.info),
+            icons = SnackbarIcons(success = AppIcons.CheckCircle, error = AppIcons.Error),
+            glow = SnackbarGlowStyle(animationMillis = tokens.motionMedium),
+        ),
+        strings = OverlayStrings(dismiss = stringResource(Res.string.dismiss), dialogPane = …),
+    )
+}
 ```
 
 `OverlayStrings` are what screen readers hear (the scrim's action, pane titles). English by default —

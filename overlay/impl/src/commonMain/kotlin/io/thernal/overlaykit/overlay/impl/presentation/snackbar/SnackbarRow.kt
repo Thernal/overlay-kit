@@ -19,15 +19,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.dp
 import io.thernal.overlaykit.overlay.api.domain.snackbar.SnackbarMessage
 import io.thernal.overlaykit.overlay.api.presentation.snackbar.SnackbarStyle
 
-private const val ICON_BACKGROUND_ALPHA = 0.14f
-
 /** The kit's snackbar row: a tone stripe, the kind's icon if the style has one, the text, the action. */
 @Composable
-internal fun DefaultSnackbar(
+internal fun SnackbarRow(
     message: SnackbarMessage,
     style: SnackbarStyle,
     onAction: () -> Unit,
@@ -56,7 +53,7 @@ internal fun DefaultSnackbar(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(style.iconContainerSize)
-                    .background(color = tone.copy(alpha = ICON_BACKGROUND_ALPHA), shape = style.iconShape),
+                    .background(color = tone.copy(alpha = style.iconBackgroundAlpha), shape = style.iconShape),
             ) {
                 Image(
                     imageVector = icon,
@@ -80,7 +77,7 @@ internal fun DefaultSnackbar(
                 modifier = Modifier
                     .clip(style.iconShape)
                     .clickable(role = Role.Button, onClick = onAction)
-                    .padding(4.dp),
+                    .padding(style.actionPadding),
             )
         }
     }

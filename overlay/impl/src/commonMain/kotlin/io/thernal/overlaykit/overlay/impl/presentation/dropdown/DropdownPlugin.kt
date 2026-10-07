@@ -1,28 +1,14 @@
 package io.thernal.overlaykit.overlay.impl.presentation.dropdown
 
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import io.thernal.overlaykit.overlay.api.domain.placement.OverlayPlacement
-import io.thernal.overlaykit.overlay.api.presentation.dropdown.DropdownStyle
 import io.thernal.overlaykit.overlay.api.presentation.host.OverlayLayerPlugin
-import io.thernal.overlaykit.overlay.impl.presentation.anchor.OverlayAnchorId
 import io.thernal.overlaykit.overlay.impl.presentation.modal.OverlayStackEntryController
-
-internal class DropdownEntry(
-    val anchorId: OverlayAnchorId,
-    val onDismissRequest: () -> Unit,
-    val placement: OverlayPlacement,
-    val isWidthMatchingAnchor: Boolean,
-    val isDismissibleOutside: Boolean,
-    val style: DropdownStyle,
-    val menuContent: @Composable ColumnScope.() -> Unit,
-)
 
 internal val LocalDropdownController = staticCompositionLocalOf<OverlayStackEntryController<DropdownEntry>> {
     error("No DropdownPlugin: wrap the app in OverlayHost.")

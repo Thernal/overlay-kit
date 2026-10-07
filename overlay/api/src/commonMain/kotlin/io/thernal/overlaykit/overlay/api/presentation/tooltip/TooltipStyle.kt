@@ -7,14 +7,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayDefaults
 
-/** The triangle pointing from a balloon at its anchor. */
-@Immutable
-data class TooltipCaret(
-    val isEnabled: Boolean = true,
-    val width: Dp = 16.dp,
-    val height: Dp = 8.dp,
-)
-
 /** How an `OverlayTooltip` balloon looks and moves. Neutral defaults; map an app's tokens in `OverlayStyles`. */
 @Immutable
 data class TooltipStyle(
@@ -34,11 +26,9 @@ data class TooltipStyle(
     val initialScale: Float = DEFAULT_INITIAL_SCALE,
     /** How long a tooltip stays before it hides itself; 0 keeps it until dismissed. */
     val autoDismissMillis: Long = DEFAULT_AUTO_DISMISS_MILLIS,
-) {
-    private companion object {
-        const val DEFAULT_ENTER_MILLIS = 180
-        const val DEFAULT_EXIT_MILLIS = 200
-        const val DEFAULT_INITIAL_SCALE = 0.82f
-        const val DEFAULT_AUTO_DISMISS_MILLIS = 2_500L
-    }
-}
+)
+
+private const val DEFAULT_ENTER_MILLIS = 180
+private const val DEFAULT_EXIT_MILLIS = 200
+private const val DEFAULT_INITIAL_SCALE = 0.82f
+private const val DEFAULT_AUTO_DISMISS_MILLIS = 2_500L

@@ -28,9 +28,7 @@ data class BottomSheetStyle(
     val isStatusBarPadded: Boolean = true,
     val isNavigationBarPadded: Boolean = true,
     val isImePadded: Boolean = true,
-) {
-    private companion object {
-        const val DEFAULT_DISMISS_THRESHOLD = 0.35f
-        const val DEFAULT_BACK_GESTURE_SHIFT = 0.1f
-    }
-}
+)
+
+private const val DEFAULT_DISMISS_THRESHOLD = 0.35f
+private const val DEFAULT_BACK_GESTURE_SHIFT = 0.1f

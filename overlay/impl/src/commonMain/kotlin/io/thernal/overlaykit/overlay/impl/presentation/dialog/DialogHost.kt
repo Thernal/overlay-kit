@@ -14,10 +14,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -26,14 +25,15 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import io.thernal.overlaykit.overlay.api.presentation.dialog.DialogStyle
+import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayTheme
+import io.thernal.overlaykit.overlay.impl.presentation.back.modalBackProgress
 import io.thernal.overlaykit.overlay.impl.presentation.common.ModalFocusEffect
 import io.thernal.overlaykit.overlay.impl.presentation.common.rememberEnterArmed
-import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayTheme
-import io.thernal.overlaykit.overlay.impl.presentation.back.OverlayBackHandler
-import io.thernal.overlaykit.overlay.impl.presentation.back.OverlayBackProgress
 import io.thernal.overlaykit.overlay.impl.presentation.host.OverlayModalEffect
 import io.thernal.overlaykit.overlay.impl.presentation.modal.AnimatedModalOverlayState
 import io.thernal.overlaykit.overlay.impl.presentation.modal.OverlayScrim
+import io.thernal.overlaykit.overlay.impl.presentation.modal.SyncModalWithStack
 
 @Composable
 internal fun BoxScope.DialogHost(
@@ -41,33 +41,11 @@ internal fun BoxScope.DialogHost(
     topEntry: DialogEntry?,
     state: AnimatedModalOverlayState<DialogEntry>,
 ) {
-    // Keyed on topKey only: entries are republished with fresh lambdas on every producer
-    // recomposition, and keying on them would restart this lifecycle coroutine each time. Content
-    // updates for the key on screen go through syncTopEntry instead.
-    val latestTopEntry by rememberUpdatedState(topEntry)
-    LaunchedEffect(topKey) {
-        latestTopEntry?.let { entry ->
-            state.animationMillis = entry.style.animationMillis
-        }
-        state.onTopEntryChanged(
-            topKey = topKey,
-            topEntry = latestTopEntry,
-        )
+    SyncModalWithStack(topKey = topKey, topEntry = topEntry, state = state) { entry ->
+        state.animationMillis = entry.style.animationMillis
     }
-
-    SideEffect {
-        state.syncTopEntry(
-            topKey = topKey,
-            topEntry = topEntry,
-        )
-    }
-
     LaunchedEffect(key1 = state.currentEntry, key2 = state.isDismissing) {
         state.animateInIfReady()
-    }
-
-    LaunchedEffect(state.shouldRender) {
-        state.ensureHiddenWhenNotRendering()
     }
 
     val entry = state.currentEntry
@@ -77,36 +55,18 @@ internal fun BoxScope.DialogHost(
 
     val isShown = !state.isDismissing
     OverlayModalEffect(owner = state, isActive = isShown)
-    val backProgress = if (isShown) {
-        OverlayBackHandler(
-            onBack = entry.onDismissRequest,
-            isEnabled = entry.isDismissibleByBack,
-        )
-    } else {
-        OverlayBackProgress.None
-    }
+    val backProgress = modalBackProgress(
+        isShown = isShown,
+        onBack = entry.onDismissRequest,
+        isEnabled = entry.isDismissibleByBack,
+    )
 
     val focusRequester = remember { FocusRequester() }
     ModalFocusEffect(entryKey = topKey, isShown = isShown, focusRequester = focusRequester)
 
+    // Called on every composition, shown or not, so the armed state it remembers survives the exit.
     val isEnterArmed = rememberEnterArmed(topKey)
-    val isGrowing = isEnterArmed && isShown
-    val animatedScale by animateFloatAsState(
-        targetValue = if (isGrowing) {
-            1f
-        } else {
-            entry.style.enterScale
-        },
-        animationSpec = if (isGrowing) {
-            spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMedium,
-            )
-        } else {
-            tween(durationMillis = entry.style.animationMillis, easing = FastOutLinearInEasing)
-        },
-        label = "dialog_scale",
-    )
+    val animatedScale by rememberDialogScale(entry = entry, isShown = isShown && isEnterArmed)
     val strings = OverlayTheme.styles.strings
 
     OverlayScrim(
@@ -128,20 +88,7 @@ internal fun BoxScope.DialogHost(
     ) {
         Box(
             modifier = Modifier
-                .then(
-                    if (entry.style.isStatusBarPadded) {
-                        Modifier.statusBarsPadding()
-                    } else {
-                        Modifier
-                    },
-                )
-                .then(
-                    if (entry.style.isNavigationBarPadded) {
-                        Modifier.navigationBarsPadding()
-                    } else {
-                        Modifier
-                    },
-                )
+                .systemBarsPadding(style = entry.style)
                 .graphicsLayer {
                     val backScale = 1f - (1f - entry.style.backGestureScale) * backProgress.value
                     scaleX = animatedScale * backScale
@@ -161,4 +108,42 @@ internal fun BoxScope.DialogHost(
             entry.content()
         }
     }
+}
+
+/** Springs up from [DialogStyle.enterScale] once the dialog is [isShown], and shrinks back as it leaves. */
+@Composable
+private fun rememberDialogScale(
+    entry: DialogEntry,
+    isShown: Boolean,
+): State<Float> {
+    return animateFloatAsState(
+        targetValue = if (isShown) {
+            1f
+        } else {
+            entry.style.enterScale
+        },
+        animationSpec = if (isShown) {
+            spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMedium,
+            )
+        } else {
+            tween(durationMillis = entry.style.animationMillis, easing = FastOutLinearInEasing)
+        },
+        label = "dialog_scale",
+    )
+}
+
+private fun Modifier.systemBarsPadding(style: DialogStyle): Modifier {
+    val status = if (style.isStatusBarPadded) {
+        Modifier.statusBarsPadding()
+    } else {
+        Modifier
+    }
+    val navigation = if (style.isNavigationBarPadded) {
+        Modifier.navigationBarsPadding()
+    } else {
+        Modifier
+    }
+    return this.then(status).then(navigation)
 }

@@ -18,6 +18,7 @@ kotlin {
             dependencies {
                 implementation(projects.overlay.api)
                 implementation(projects.overlay.wiring)
+                implementation(projects.sample.designsystem)
                 implementation(libs.compose.material3)
             }
         }

@@ -26,6 +26,8 @@ import dev.zacsweers.metro.createGraph
 import io.thernal.overlaykit.overlay.api.presentation.host.OverlayHost
 import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayStyles
 import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayTheme
+import io.thernal.overlaykit.sample.designsystem.SampleTheme
+import io.thernal.overlaykit.sample.designsystem.overlay.sampleOverlayStyles
 
 /**
  * The sample's root, as an application's root would be: the graph's renderers, the overlay theme,
@@ -49,33 +51,44 @@ private fun SampleRoot(
     onBrandedChange: (Boolean) -> Unit,
 ) {
     MaterialTheme {
-        OverlayTheme(
-            styles = if (isBranded) {
-                brandedOverlayStyles()
-            } else {
-                OverlayStyles()
-            },
-        ) {
-            OverlayHost {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier
-                            .safeDrawingPadding()
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
+        SampleTheme {
+            SampleOverlays(isBranded = isBranded, onBrandedChange = onBrandedChange)
+        }
+    }
+}
+
+/** The kit's neutral defaults, or the design system's tokens mapped through `sampleOverlayStyles()`. */
+@Composable
+private fun SampleOverlays(
+    isBranded: Boolean,
+    onBrandedChange: (Boolean) -> Unit,
+) {
+    OverlayTheme(
+        styles = if (isBranded) {
+            sampleOverlayStyles()
+        } else {
+            OverlayStyles()
+        },
+    ) {
+        OverlayHost {
+            Surface(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .safeDrawingPadding()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Text(text = "overlay-kit", style = MaterialTheme.typography.headlineSmall)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        Text(text = "overlay-kit", style = MaterialTheme.typography.headlineSmall)
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Text(text = "App tokens mapped through OverlayStyles")
-                            Switch(checked = isBranded, onCheckedChange = onBrandedChange)
-                        }
-                        OverlaysScreen()
+                        Text(text = "App tokens mapped through OverlayStyles")
+                        Switch(checked = isBranded, onCheckedChange = onBrandedChange)
                     }
+                    OverlaysScreen()
                 }
             }
         }

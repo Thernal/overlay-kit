@@ -6,9 +6,9 @@ import io.thernal.overlaykit.overlay.api.domain.placement.OverlayPlacement
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DefaultOverlayPlacementResolverTest {
+class OverlayPlacementResolverImplTest {
 
-    private val resolver = DefaultOverlayPlacementResolver()
+    private val resolver = OverlayPlacementResolverImpl()
 
     @Test
     fun `keeps the preferred placement when it already fits`() {

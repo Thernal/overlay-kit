@@ -18,6 +18,7 @@ dependencies {
     // implementation, not compileOnly: unlike the others, the Detekt plugin is applied by a
     // convention rather than declared in the root build, so it has to travel with build-logic.
     implementation(libs.detekt.gradle.plugin)
+    testImplementation(libs.junit4)
 }
 
 gradlePlugin {
@@ -30,13 +31,13 @@ gradlePlugin {
             id = "io.thernal.overlaykit.compose"
             implementationClass = "io.thernal.overlaykit.buildlogic.ComposeConventionPlugin"
         }
-        register("injection") {
-            id = "io.thernal.overlaykit.injection"
-            implementationClass = "io.thernal.overlaykit.buildlogic.InjectionConventionPlugin"
-        }
         register("androidApplication") {
             id = "io.thernal.overlaykit.android.application"
             implementationClass = "io.thernal.overlaykit.buildlogic.AndroidApplicationConventionPlugin"
+        }
+        register("injection") {
+            id = "io.thernal.overlaykit.injection"
+            implementationClass = "io.thernal.overlaykit.buildlogic.InjectionConventionPlugin"
         }
     }
 }

@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
  * The single baseline every module in this repository shares: the Kotlin Multiplatform plugin, the
- * target set, and the test dependencies. Anything Compose-specific is a separate
+ * target set, and the test dependencies. Anything Compose- or injection-specific is a separate
  * convention so a module names only the capabilities it actually uses.
  */
 class KmpLibraryConventionPlugin : Plugin<Project> {
@@ -27,8 +27,8 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 freeCompilerArgs.add("-Xexpect-actual-classes")
             }
 
-            // The same target set as nav-kit, so the two kits can sit in one application. Compose
-            // Multiplatform publishes more (desktop, web, iosX64); nothing here builds for them yet.
+            // The target set every kit builds for, so any of them can sit in one application. Compose
+            // Multiplatform publishes more (desktop, web, iosX64); no kit builds for them yet.
             androidTarget(namespace, catalog)
             iosArm64()
             iosSimulatorArm64()

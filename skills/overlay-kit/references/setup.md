@@ -14,7 +14,7 @@ The modules use Compose runtime, foundation, ui, animation and
 ## The root
 
 ```kotlin
-CompositionLocalProvider(*graph.compositionLocals.toTypedArray()) {   // OverlayWiring's renderers
+CompositionLocalProvider(*graph.compositionLocals.toTypedArray()) {   // OverlayProvidersModule's renderers
     AppTheme {
         OverlayTheme(styles = appOverlayStyles()) {
             OverlayHost { AppContent() }             // extraPlugins = listOf(…) for the app's own overlays
@@ -37,11 +37,20 @@ ProvideOverlays {
 }
 ```
 
-## Styles
+## Styles — from the app's design system
 
-One function maps the app's tokens: `OverlayStyles(dialog = DialogStyle(…), bottomSheet = …, dropdown = …,
-tooltip = …, snackbar = SnackbarStyle(tones = …, icons = …), showcase = …, strings = OverlayStrings(…))`.
-Every field has a neutral default; set what the design system defines.
+Overlays look like the app's design system, never like the kit. One app-owned file in the design-system
+module maps its tokens: `designsystem/…/overlay/AppOverlayStyles.kt`,
+`@Composable fun appOverlayStyles(): OverlayStyles` reading the design system's theme —
+`OverlayStyles(dialog = DialogStyle(…), bottomSheet = …, dropdown = …, tooltip = …,
+snackbar = SnackbarStyle(tones = …, icons = …), showcase = …, strings = OverlayStrings(…))`. The root
+installs it inside the design system's theme: `AppTheme { OverlayTheme(styles = appOverlayStyles()) { OverlayHost { … } } }`.
+
+- No mapping yet (overlays look grey-on-white, the kit's neutral defaults): write the file from the
+  design system's own tokens — colours, shapes, spacing, typography, motion — before styling anything
+  else. The kit's `sample/designsystem/…/overlay/SampleOverlayStyles.kt` shows the shape.
+- Never change a look by editing the kit's files: a one-off is `style =` at the call site, the rest is
+  the mapping. Map looks; leave behaviour (thresholds, auto-dismiss, insets) at the kit's defaults.
 
 ## Android
 

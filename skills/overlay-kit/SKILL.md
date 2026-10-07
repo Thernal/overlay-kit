@@ -1,6 +1,6 @@
 ---
 name: overlay-kit
-description: Writes, reviews and debugs overlay code in Compose Multiplatform apps that use overlay-kit (packages io.thernal.overlaykit.overlay.*; OverlayHost, OverlayDialog, OverlayBottomSheet, OverlayDropdown, OverlayTooltip, OverlayShowcase, LocalSnackbarManager, SnackbarMessage, OverlayStyles, DialogRenderer and the other renderers, OverlayWiring, OverlayLayerPlugin, InlineOverlayRenderers). Use it for any dialog, bottom sheet, menu, tooltip, snackbar, toast, coach mark or popup work in such a project, even when the kit is not named — a confirmation, a picker sheet, an anchored menu, a message after an action, styling overlays with the app's tokens, a sheet as a Navigation 3 destination, an overlay that never appears or lacks the app's theme, back not closing it, previews and UI tests of screens with overlays. Not for projects without overlay-kit.
+description: Writes, reviews and debugs overlay code in Compose Multiplatform apps that use overlay-kit (packages io.thernal.overlaykit.overlay.*; OverlayHost, OverlayDialog, OverlayBottomSheet, OverlayDropdown, OverlayTooltip, OverlayShowcase, LocalSnackbarManager, SnackbarMessage, OverlayStyles, DialogRenderer and the other renderers, OverlayProvidersModule, OverlayLayerPlugin, InlineOverlayRenderers). Use it for any dialog, bottom sheet, menu, tooltip, snackbar, toast, coach mark or popup work in such a project, even when the kit is not named — a confirmation, a picker sheet, an anchored menu, a message after an action, styling overlays with the app's tokens, a sheet as a Navigation 3 destination, an overlay that never appears or lacks the app's theme, back not closing it, previews and UI tests of screens with overlays. Not for projects without overlay-kit.
 ---
 
 # overlay-kit
@@ -28,12 +28,13 @@ than hand edits.
 - A call site owns the state: `OverlayDialog(isVisible, onDismissRequest) { … }`. `onDismissRequest`
   (scrim, back, drag) must set `isVisible = false` — the overlay never hides itself.
 - Each overlay composable (`api`) calls a `…Renderer` from a CompositionLocal; `impl`'s renderers are
-  installed at the root by `OverlayWiring` (Metro) or `overlayRenderers()`. Not installed → previews only:
+  installed at the root by `OverlayProvidersModule` (Metro) or `overlayRenderers()`. Not installed → previews only:
   overlays never appear. Feature modules depend on `api` only.
 - The call site draws nothing; the plugin at the host does. **Overlay content is composed at the host**:
   a CompositionLocal provided between the host and the call site is invisible inside the overlay.
-- Looks come from `…Style` values, defaulting to `OverlayTheme.styles`; the app maps its tokens once in
-  `OverlayStyles`. Text inside overlays is the app's own composables.
+- Looks come from `…Style` values, defaulting to `OverlayTheme.styles`; the app maps its design system's
+  tokens once, in one file of its design-system module (`appOverlayStyles()`), installed at the root.
+  Never restyle by editing kit code. Text inside overlays is the app's own composables.
 - Snackbar: `LocalSnackbarManager.current.show(SnackbarMessage(text, kind, position, actionLabel, onAction))`.
 - Modal overlays hide the screen from accessibility and keyboard focus, take focus if the screen had it,
   and close on back (predictive back included). Dropdowns are not modal.
@@ -64,7 +65,7 @@ than hand edits.
 | Symptom | Cause |
 |---|---|
 | `No DialogPlugin: wrap the app in OverlayHost.` | renderers installed but no host above the call (a second compose root) |
-| overlays never appear, anchors draw | renderers not installed — the root lacks `OverlayWiring` / `overlayRenderers()` |
+| overlays never appear, anchors draw | renderers not installed — the root lacks `OverlayProvidersModule` / `overlayRenderers()` |
 | the overlay ignores the app's theme or a local | that provider sits below the host — move it above |
 | the dropdown opens and closes at once | the anchor's own click toggles too — `isToggledByAnchor = false` |
 | back closes the screen, not the overlay | another back handler added later; or (Android) not a `ComponentActivity` |

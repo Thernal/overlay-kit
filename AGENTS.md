@@ -70,7 +70,9 @@ bumped (`scripts/check-corpus.py --kits` says so).
 
 ## The sample
 
-`sample/` shows every overlay on Android and iOS and is never copied into apps. A sample that builds is
+`sample/` shows every overlay on Android and iOS and is never copied into apps. `sample/designsystem` is
+how an app's design system feeds the overlays — keep every look the kit draws reachable from a `…Style`
+field, so that mapping can set it; a value hard-coded in `impl` is a look no app can change. A sample that builds is
 not one that starts: after changing it, build the iOS app with `xcodebuild` and launch it on a simulator
 (`xcrun simctl launch --console-pty …`) — Compose Multiplatform refuses to start without
 `CADisableMinimumFrameDurationOnPhone` in Info.plist, and a crash there shows nowhere else.

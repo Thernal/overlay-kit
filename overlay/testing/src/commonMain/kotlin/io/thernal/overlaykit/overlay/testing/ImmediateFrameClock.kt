@@ -2,8 +2,6 @@ package io.thernal.overlaykit.overlay.testing
 
 import androidx.compose.runtime.MonotonicFrameClock
 
-private const val FRAME_DURATION_NANOS = 16_000_000L
-
 /**
  * Compose animations wait on `withFrameNanos`, which needs a [MonotonicFrameClock] the UI runtime
  * normally supplies. Run a test with `runTest(context = ImmediateFrameClock()) { … }` and every
@@ -18,3 +16,5 @@ class ImmediateFrameClock : MonotonicFrameClock {
         return onFrame(frameTimeNanos)
     }
 }
+
+private const val FRAME_DURATION_NANOS = 16_000_000L

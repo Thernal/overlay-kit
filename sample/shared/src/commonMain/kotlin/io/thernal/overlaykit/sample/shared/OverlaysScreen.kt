@@ -36,8 +36,6 @@ import io.thernal.overlaykit.overlay.api.domain.snackbar.SnackbarPosition
 import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayTheme
 import io.thernal.overlaykit.overlay.api.presentation.tooltip.OverlayTooltip
 
-private const val SHEET_ITEM_COUNT = 30
-
 /** One section per overlay. Every overlay's content is ordinary composables — Material, here. */
 @Composable
 internal fun OverlaysScreen() {
@@ -282,3 +280,5 @@ private fun FocusSection() {
         }
     }
 }
+
+private const val SHEET_ITEM_COUNT = 30

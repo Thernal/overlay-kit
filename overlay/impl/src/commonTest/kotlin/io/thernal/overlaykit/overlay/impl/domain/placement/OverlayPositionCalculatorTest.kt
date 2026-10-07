@@ -14,7 +14,7 @@ class OverlayPositionCalculatorTest {
         val calculator = OverlayPositionCalculator(
             anchorBounds = IntRect(left = 0, top = 200, right = 40, bottom = 220),
             preferredPlacement = OverlayPlacement.Bottom,
-            placementResolver = DefaultOverlayPlacementResolver(),
+            placementResolver = OverlayPlacementResolverImpl(),
             edgeMarginPx = 5,
             anchorSpacingPx = 5,
         )
@@ -36,7 +36,7 @@ class OverlayPositionCalculatorTest {
         val calculator = OverlayPositionCalculator(
             anchorBounds = IntRect(left = 100, top = 200, right = 140, bottom = 220),
             preferredPlacement = OverlayPlacement.Top,
-            placementResolver = DefaultOverlayPlacementResolver(),
+            placementResolver = OverlayPlacementResolverImpl(),
             edgeMarginPx = 5,
             anchorSpacingPx = 5,
         )

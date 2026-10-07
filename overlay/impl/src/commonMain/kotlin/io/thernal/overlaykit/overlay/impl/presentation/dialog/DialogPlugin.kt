@@ -7,20 +7,10 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.Alignment
 import io.thernal.overlaykit.overlay.api.presentation.dialog.DialogStyle
 import io.thernal.overlaykit.overlay.api.presentation.host.OverlayLayerPlugin
 import io.thernal.overlaykit.overlay.impl.presentation.modal.AnimatedModalOverlayState
 import io.thernal.overlaykit.overlay.impl.presentation.modal.OverlayStackEntryController
-
-internal class DialogEntry(
-    val onDismissRequest: () -> Unit,
-    val alignment: Alignment,
-    val isDismissibleOutside: Boolean,
-    val isDismissibleByBack: Boolean,
-    val style: DialogStyle,
-    val content: @Composable () -> Unit,
-)
 
 internal val LocalDialogController = staticCompositionLocalOf<OverlayStackEntryController<DialogEntry>> {
     error("No DialogPlugin: wrap the app in OverlayHost.")

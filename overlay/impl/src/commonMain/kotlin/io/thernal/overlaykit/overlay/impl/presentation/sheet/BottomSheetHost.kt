@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -26,12 +25,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import io.thernal.overlaykit.overlay.impl.presentation.common.ModalFocusEffect
 import io.thernal.overlaykit.overlay.api.presentation.theme.OverlayTheme
-import io.thernal.overlaykit.overlay.impl.presentation.back.OverlayBackHandler
-import io.thernal.overlaykit.overlay.impl.presentation.back.OverlayBackProgress
+import io.thernal.overlaykit.overlay.impl.presentation.back.modalBackProgress
+import io.thernal.overlaykit.overlay.impl.presentation.common.ModalFocusEffect
 import io.thernal.overlaykit.overlay.impl.presentation.host.OverlayModalEffect
 import io.thernal.overlaykit.overlay.impl.presentation.modal.OverlayScrim
+import io.thernal.overlaykit.overlay.impl.presentation.modal.SyncModalWithStack
 
 @Composable
 internal fun BoxScope.BottomSheetHost(
@@ -39,45 +38,14 @@ internal fun BoxScope.BottomSheetHost(
     topEntry: BottomSheetEntry?,
     state: BottomSheetState,
 ) {
-    // Keyed on topKey only — see DialogHost.
-    val latestTopEntry by rememberUpdatedState(topEntry)
-    LaunchedEffect(topKey) {
-        latestTopEntry?.let { entry ->
-            state.animationMillis = entry.style.animationMillis
-        }
-        state.onTopEntryChanged(
-            topKey = topKey,
-            topEntry = latestTopEntry,
-        )
+    SyncModalWithStack(topKey = topKey, topEntry = topEntry, state = state) { entry ->
+        state.animationMillis = entry.style.animationMillis
     }
-
-    SideEffect {
-        state.syncTopEntry(
-            topKey = topKey,
-            topEntry = topEntry,
-        )
-    }
-
     LaunchedEffect(key1 = state.currentEntry, key2 = state.sheetHeightPx, key3 = state.isDismissing) {
         state.animateInIfReady()
     }
 
-    LaunchedEffect(state.shouldRender) {
-        state.ensureHiddenWhenNotRendering()
-    }
-
-    // A settle at Hidden this state did not start is the user closing the sheet by hand.
-    LaunchedEffect(state) {
-        snapshotFlow { state.draggable.settledValue }
-            .collect { value ->
-                if (value == SheetValue.Expanded) {
-                    state.hasSettledExpanded = true
-                } else if (state.hasSettledExpanded && state.shouldRender && !state.isDismissing) {
-                    state.onClosedByUser()
-                    state.currentEntry?.onDismissRequest?.invoke()
-                }
-            }
-    }
+    CloseWhenSwipedAway(state)
 
     val entry = state.currentEntry
     if (!state.shouldRender || entry == null) {
@@ -86,31 +54,16 @@ internal fun BoxScope.BottomSheetHost(
 
     val isShown = !state.isDismissing
     OverlayModalEffect(owner = state, isActive = isShown)
-    val backProgress = if (isShown) {
-        OverlayBackHandler(
-            onBack = entry.onDismissRequest,
-            isEnabled = entry.isDismissibleByBack,
-        )
-    } else {
-        OverlayBackProgress.None
-    }
+    val backProgress = modalBackProgress(
+        isShown = isShown,
+        onBack = entry.onDismissRequest,
+        isEnabled = entry.isDismissibleByBack,
+    )
 
     val focusRequester = remember { FocusRequester() }
     ModalFocusEffect(entryKey = topKey, isShown = isShown, focusRequester = focusRequester)
 
-    val density = LocalDensity.current
-    val latestStyle by rememberUpdatedState(entry.style)
-    val nestedScrollConnection = remember(key1 = state, key2 = density) {
-        SheetNestedScrollConnection(
-            state = state,
-            minFlingVelocityPx = { with(density) { SheetMinFlingVelocity.toPx() } },
-            dismissThreshold = { latestStyle.dismissThreshold },
-        )
-    }
-    val flingBehavior = AnchoredDraggableDefaults.flingBehavior(
-        state = state.draggable,
-        positionalThreshold = { distance -> distance * entry.style.dismissThreshold },
-    )
+    val dragging = Modifier.sheetDragging(state = state, entry = entry, isEnabled = isShown)
     val strings = OverlayTheme.styles.strings
 
     OverlayScrim(
@@ -135,20 +88,7 @@ internal fun BoxScope.BottomSheetHost(
             .onSizeChanged { size ->
                 state.onSheetHeightChanged(size.height.toFloat())
             }
-            .then(
-                if (entry.isDraggable) {
-                    Modifier
-                        .nestedScroll(nestedScrollConnection)
-                        .anchoredDraggable(
-                            state = state.draggable,
-                            orientation = Orientation.Vertical,
-                            enabled = isShown,
-                            flingBehavior = flingBehavior,
-                        )
-                } else {
-                    Modifier
-                },
-            )
+            .then(dragging)
             .semantics {
                 paneTitle = strings.bottomSheetPane
                 isTraversalGroup = true
@@ -158,4 +98,53 @@ internal fun BoxScope.BottomSheetHost(
     ) {
         entry.content()
     }
+}
+
+/** A settle at Hidden this state did not start is the user closing the sheet by hand. */
+@Composable
+private fun CloseWhenSwipedAway(state: BottomSheetState) {
+    LaunchedEffect(state) {
+        snapshotFlow { state.draggable.settledValue }
+            .collect { value ->
+                if (value == SheetValue.Expanded) {
+                    state.hasSettledExpanded = true
+                } else if (state.hasSettledExpanded && state.shouldRender && !state.isDismissing) {
+                    state.onClosedByUser()
+                    state.currentEntry?.onDismissRequest?.invoke()
+                }
+            }
+    }
+}
+
+/** Dragging and flinging the sheet, nested scrolls first, when the entry allows it. */
+@Composable
+private fun Modifier.sheetDragging(
+    state: BottomSheetState,
+    entry: BottomSheetEntry,
+    isEnabled: Boolean,
+): Modifier {
+    val density = LocalDensity.current
+    val latestStyle by rememberUpdatedState(entry.style)
+    val nestedScrollConnection = remember(key1 = state, key2 = density) {
+        SheetNestedScrollConnection(
+            state = state,
+            minFlingVelocityPx = { with(density) { SheetMinFlingVelocity.toPx() } },
+            dismissThreshold = { latestStyle.dismissThreshold },
+        )
+    }
+    val flingBehavior = AnchoredDraggableDefaults.flingBehavior(
+        state = state.draggable,
+        positionalThreshold = { distance -> distance * entry.style.dismissThreshold },
+    )
+    if (!entry.isDraggable) {
+        return this
+    }
+    return this
+        .nestedScroll(nestedScrollConnection)
+        .anchoredDraggable(
+            state = state.draggable,
+            orientation = Orientation.Vertical,
+            enabled = isEnabled,
+            flingBehavior = flingBehavior,
+        )
 }

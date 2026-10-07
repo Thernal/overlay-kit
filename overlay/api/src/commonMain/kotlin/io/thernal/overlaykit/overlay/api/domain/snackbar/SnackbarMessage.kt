@@ -2,19 +2,6 @@ package io.thernal.overlaykit.overlay.api.domain.snackbar
 
 import androidx.compose.runtime.Immutable
 
-enum class SnackbarKind {
-    Neutral,
-    Info,
-    Success,
-    Warning,
-    Error,
-}
-
-enum class SnackbarPosition {
-    Top,
-    Bottom,
-}
-
 /**
  * One message for the snackbar. The kit draws [text] and [actionLabel] as they are — an app with
  * its own string type (arch-kit's `UiString`) resolves it before calling `show`.

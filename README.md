@@ -7,7 +7,7 @@ by one host at the root of the app, in the app's own composition rather than in 
 ```kotlin
 @Composable
 fun AppRoot(graph: AppGraph) {
-    // The renderers, contributed by OverlayWiring to the graph's Set<ProvidedValue<*>>.
+    // The renderers, contributed by OverlayProvidersModule to the graph's Set<ProvidedValue<*>>.
     CompositionLocalProvider(*graph.compositionLocals.toTypedArray()) {
         OverlayTheme(styles = appOverlayStyles()) {   // the app's tokens, mapped once
             OverlayHost {                             // every overlay of the kit, stacked right
@@ -94,7 +94,8 @@ The same by hand, from a clone of this repository.
 | `overlay/impl` | the renderers; the plugin host, backdrop, anchors, anchored placement (`AnchoredOverlay`), the modal lifecycle, the scrim, back handling; each overlay's plugin and host; the snackbar queue | api, Compose, navigationevent |
 | `overlay/wiring` | the renderers as `ProvidedValue`s in the app graph | api, impl, Metro |
 | `overlay/testing` | `RecordingSnackbarManager`, `InlineOverlayRenderers` (overlays drawn in place, for UI tests), `ImmediateFrameClock` | api |
-| `sample/shared`, `sample/android`, `sample/ios` | one screen with every overlay, and a switch to an app's mapped styles | the kit — never copied |
+| `sample/designsystem` | a small design system — `SampleTheme` tokens and `SampleOverlayStyles`, the mapping an app writes in its own design system | api — never copied |
+| `sample/shared`, `sample/android`, `sample/ios` | one screen with every overlay, and a switch between the kit's neutral defaults and the design system's mapped styles | the kit — never copied |
 
 ## Building
 

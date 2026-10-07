@@ -3,11 +3,7 @@ package io.thernal.overlaykit.overlay.impl.presentation.placement
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.GraphicsLayerScope
@@ -25,40 +21,13 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.thernal.overlaykit.overlay.api.domain.placement.OverlayPlacement
-import io.thernal.overlaykit.overlay.impl.domain.placement.DefaultOverlayPlacementResolver
+import io.thernal.overlaykit.overlay.impl.domain.placement.OverlayPlacementResolverImpl
 import io.thernal.overlaykit.overlay.impl.domain.placement.OverlayCalculatedPosition
 import io.thernal.overlaykit.overlay.impl.domain.placement.OverlayPlacementResolver
 import io.thernal.overlaykit.overlay.impl.domain.placement.OverlayPositionCalculator
 import io.thernal.overlaykit.overlay.impl.domain.placement.toSemanticPlacement
 import io.thernal.overlaykit.overlay.impl.presentation.anchor.LocalOverlayAnchorRegistry
 import io.thernal.overlaykit.overlay.impl.presentation.anchor.OverlayAnchorId
-
-/**
- * What [AnchoredOverlay] resolved on its last layout — read it in draw or layer blocks (a caret
- * shape, a transform origin), never in composition: it is written during layout.
- */
-@Stable
-class AnchoredOverlayState {
-    var position: OverlayCalculatedPosition? by mutableStateOf(null)
-        internal set
-
-    var popupSize: IntSize by mutableStateOf(IntSize.Zero)
-        internal set
-}
-
-/** The enter or exit animation applied to the whole popup, around the point touching the anchor. */
-@Stable
-class AnchoredOverlayAnimation(
-    val alpha: () -> Float,
-    val scale: () -> Float,
-) {
-    companion object {
-        val None: AnchoredOverlayAnimation = AnchoredOverlayAnimation(
-            alpha = { 1f },
-            scale = { 1f },
-        )
-    }
-}
 
 /**
  * Lays [content] out next to the anchor [anchorId], in one measure-and-place pass: the content is
@@ -83,7 +52,7 @@ fun AnchoredOverlay(
     caretInset: Dp = 0.dp,
     isWidthMatchingAnchor: Boolean = false,
     isAvoidingIme: Boolean = true,
-    placementResolver: OverlayPlacementResolver = DefaultOverlayPlacementResolver(),
+    placementResolver: OverlayPlacementResolver = OverlayPlacementResolverImpl(),
     chrome: @Composable () -> Unit = {},
     content: @Composable () -> Unit,
 ) {

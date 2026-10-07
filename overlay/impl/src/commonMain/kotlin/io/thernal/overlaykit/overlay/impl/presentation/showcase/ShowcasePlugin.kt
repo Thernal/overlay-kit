@@ -7,22 +7,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Shape
-import io.thernal.overlaykit.overlay.api.domain.placement.OverlayPlacement
 import io.thernal.overlaykit.overlay.api.presentation.host.OverlayLayerPlugin
-import io.thernal.overlaykit.overlay.api.presentation.showcase.ShowcaseStyle
-import io.thernal.overlaykit.overlay.impl.presentation.anchor.OverlayAnchorId
 import io.thernal.overlaykit.overlay.impl.presentation.modal.OverlayStackEntryController
-
-internal class ShowcaseEntry(
-    val anchorId: OverlayAnchorId,
-    val anchorShape: Shape,
-    val isVisible: Boolean,
-    val onDismissRequest: () -> Unit,
-    val placement: OverlayPlacement,
-    val style: ShowcaseStyle,
-    val content: @Composable () -> Unit,
-)
 
 internal val LocalShowcaseController = staticCompositionLocalOf<OverlayStackEntryController<ShowcaseEntry>> {
     error("No ShowcasePlugin: wrap the app in OverlayHost.")

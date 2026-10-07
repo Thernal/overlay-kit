@@ -22,8 +22,6 @@ data class DropdownStyle(
     val animationMillis: Int = OverlayDefaults.FADE_MILLIS,
     /** The scale the menu grows from, around the point touching the anchor. */
     val enterScale: Float = DEFAULT_ENTER_SCALE,
-) {
-    private companion object {
-        const val DEFAULT_ENTER_SCALE = 0.96f
-    }
-}
+)
+
+private const val DEFAULT_ENTER_SCALE = 0.96f

@@ -15,9 +15,7 @@ data class ShowcaseStyle(
     val enterMillis: Int = DEFAULT_ENTER_MILLIS,
     val exitMillis: Int = DEFAULT_EXIT_MILLIS,
     val balloon: TooltipStyle = TooltipStyle(autoDismissMillis = 0L),
-) {
-    private companion object {
-        const val DEFAULT_ENTER_MILLIS = 220
-        const val DEFAULT_EXIT_MILLIS = 160
-    }
-}
+)
+
+private const val DEFAULT_ENTER_MILLIS = 220
+private const val DEFAULT_EXIT_MILLIS = 160

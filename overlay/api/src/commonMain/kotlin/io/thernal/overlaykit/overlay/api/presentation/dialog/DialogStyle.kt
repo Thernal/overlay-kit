@@ -25,9 +25,7 @@ data class DialogStyle(
     val backGestureScale: Float = DEFAULT_BACK_GESTURE_SCALE,
     val isStatusBarPadded: Boolean = true,
     val isNavigationBarPadded: Boolean = true,
-) {
-    private companion object {
-        const val DEFAULT_ENTER_SCALE = 0.82f
-        const val DEFAULT_BACK_GESTURE_SCALE = 0.9f
-    }
-}
+)
+
+private const val DEFAULT_ENTER_SCALE = 0.82f
+private const val DEFAULT_BACK_GESTURE_SCALE = 0.9f

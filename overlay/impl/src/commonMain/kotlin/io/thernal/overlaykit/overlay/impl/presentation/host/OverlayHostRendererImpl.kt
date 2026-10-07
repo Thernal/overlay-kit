@@ -42,7 +42,7 @@ fun overlayPlugins(extraPlugins: List<OverlayLayerPlugin> = emptyList()): List<O
 
 /**
  * Every renderer of the kit as a `ProvidedValue`, for a root to install with
- * `CompositionLocalProvider` — what `OverlayWiring` contributes to an app graph, for an app without
+ * `CompositionLocalProvider` — what `OverlayProvidersModule` contributes to an app graph, for an app without
  * one.
  */
 fun overlayRenderers(): List<ProvidedValue<*>> {

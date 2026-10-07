@@ -12,15 +12,6 @@ import io.thernal.overlaykit.overlay.api.presentation.sheet.BottomSheetStyle
 import io.thernal.overlaykit.overlay.impl.presentation.backdrop.OverlayBackdropContribution
 import io.thernal.overlaykit.overlay.impl.presentation.modal.OverlayStackEntryController
 
-internal class BottomSheetEntry(
-    val onDismissRequest: () -> Unit,
-    val isDismissibleOutside: Boolean,
-    val isDismissibleByBack: Boolean,
-    val isDraggable: Boolean,
-    val style: BottomSheetStyle,
-    val content: @Composable () -> Unit,
-)
-
 internal val LocalBottomSheetController = staticCompositionLocalOf<OverlayStackEntryController<BottomSheetEntry>> {
     error("No BottomSheetPlugin: wrap the app in OverlayHost.")
 }
@@ -28,8 +19,6 @@ internal val LocalBottomSheetController = staticCompositionLocalOf<OverlayStackE
 private val LocalBottomSheetState = staticCompositionLocalOf<BottomSheetState> {
     error("No BottomSheetPlugin: wrap the app in OverlayHost.")
 }
-
-private const val BOTTOM_SHEET_BACKDROP_OWNER = "bottomsheet"
 
 /**
  * Draws `OverlayBottomSheet`s from the bottom edge, over a scrim, and pushes the content behind
@@ -71,3 +60,5 @@ class BottomSheetPlugin : OverlayLayerPlugin {
         )
     }
 }
+
+private const val BOTTOM_SHEET_BACKDROP_OWNER = "bottomsheet"

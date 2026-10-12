@@ -53,7 +53,7 @@ An application takes the kit **by copy**, not as a dependency: the code is copie
 If you have access to the author's knowledge repository (`github.com/Thernal/knowledge`), its **skill-manager** skill does all of it — copy, rename, the skill, and later updates:
 
 ```sh
-skillctl.sh kit install overlay-kit --package com.example.app --module :core:overlay \
+skillctl.sh kit install overlay-kit --package com.example.app.core.designsystem --module :core:designsystem:overlay \
     --alias app
 ```
 
@@ -63,23 +63,23 @@ It copies the `code` parts of [`kit.yml`](kit.yml) renamed, installs the `overla
 
 The same by hand, from a clone of this repository.
 
-1. **Copy** the paths listed under `code` in [`kit.yml`](kit.yml) into the app, under the module path the app gives them: `overlay/…` → `core/overlay/…`. Note the commit you copied (`git rev-parse HEAD`) — updates start from it.
+1. **Copy** the paths listed under `code` in [`kit.yml`](kit.yml) into the app, under the module path the app gives them: `overlay/…` → `core/designsystem/overlay/…`. Note the commit you copied (`git rev-parse HEAD`) — updates start from it.
 2. **Rename** in everything copied:
 
    | In the kit | Becomes | Where |
    |---|---|---|
-   | `io.thernal.overlaykit` | the app's package, e.g. `com.example.app` | sources, build files; and the directories `io/thernal/overlaykit` |
-   | `:overlay:` and `":overlay"`, `projects.overlay.` | the module path, e.g. `:core:overlay:`, `projects.core.overlay.` | build files |
+   | `io.thernal.overlaykit` | the app's package for `core/designsystem`, e.g. `com.example.app.core.designsystem` | sources, build files; and the directories `io/thernal/overlaykit` |
+   | `:overlay:` and `":overlay"`, `projects.overlay.` | the module path, e.g. `:core:designsystem:overlay:`, `projects.core.designsystem.overlay.` | build files |
    | `libs.plugins.overlaykit.` | the app's catalog alias, e.g. `libs.plugins.app.` | build files |
 
    ```sh
    # in the app, after copying — perl, so it runs the same on macOS and Linux
-   grep -rlI -e io.thernal.overlaykit -e io/thernal/overlaykit -e :overlay -e plugins.overlaykit. core/overlay \
-     | xargs perl -pi -e 's/\Qio.thernal.overlaykit\E/com.example.app/g; s{\Qio/thernal/overlaykit\E}{com/example/app}g; s/\Q:overlay:\E/:core:overlay:/g; s/"\Q:overlay\E"/":core:overlay"/g; s/projects\.\Qoverlay\E\./projects.core.overlay./g; s/libs\.plugins\.\Qoverlaykit\E\./libs.plugins.app./g'
-   find core/overlay -depth -type d -path '*/io/thernal/overlaykit' | while read -r d; do
-     mkdir -p "${d%/io/thernal/overlaykit}/com/example" && mv "$d" "${d%/io/thernal/overlaykit}/com/example/app"
+   grep -rlI -e io.thernal.overlaykit -e io/thernal/overlaykit -e :overlay -e plugins.overlaykit. core/designsystem/overlay \
+     | xargs perl -pi -e 's/\Qio.thernal.overlaykit\E/com.example.app.core.designsystem/g; s{\Qio/thernal/overlaykit\E}{com/example/app/core/designsystem}g; s/\Q:overlay:\E/:core:designsystem:overlay:/g; s/"\Q:overlay\E"/":core:designsystem:overlay"/g; s/projects\.\Qoverlay\E\./projects.core.designsystem.overlay./g; s/libs\.plugins\.\Qoverlaykit\E\./libs.plugins.app./g'
+   find core/designsystem/overlay -depth -type d -path '*/io/thernal/overlaykit' | while read -r d; do
+     mkdir -p "${d%/io/thernal/overlaykit}/com/example/app/core" && mv "$d" "${d%/io/thernal/overlaykit}/com/example/app/core/designsystem"
    done
-   find core/overlay -depth -type d -empty -delete
+   find core/designsystem/overlay -depth -type d -empty -delete
    ```
 
 3. **Provide** what the copy expects — the `requires` list in [`kit.yml`](kit.yml): convention plugins (build-kit's, or the ones in this repository's `build-logic/convention`), catalog entries, settings.

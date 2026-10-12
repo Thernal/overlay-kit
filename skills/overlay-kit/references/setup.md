@@ -40,7 +40,7 @@ ProvideOverlays {
 ## Styles — from the app's design system
 
 Overlays look like the app's design system, never like the kit. One app-owned file in the design-system
-module maps its tokens: `designsystem/…/overlay/AppOverlayStyles.kt`,
+module maps its tokens: `core/designsystem/…/overlay/AppOverlayStyles.kt`,
 `@Composable fun appOverlayStyles(): OverlayStyles` reading the design system's theme —
 `OverlayStyles(dialog = DialogStyle(…), bottomSheet = …, dropdown = …, tooltip = …,
 snackbar = SnackbarStyle(tones = …, icons = …), showcase = …, strings = OverlayStrings(…))`. The root

@@ -39,7 +39,7 @@ The kit decides how overlays behave — placement, gestures, back, focus, the mo
 overlay takes a `style`, defaulting to `OverlayTheme.styles`, and the app fills `OverlayStyles` from its
 own tokens, once:
 
-- **One file, in the app's design-system module** — `designsystem/…/overlay/AppOverlayStyles.kt`, a
+- **One file, in the app's design-system module** — `core/designsystem/…/overlay/AppOverlayStyles.kt`, a
   `@Composable fun appOverlayStyles(): OverlayStyles` that reads the design system's theme. It is the
   app's code: no kit update touches it.
 - **Installed at the root**, inside the design system's theme and above `OverlayHost`:

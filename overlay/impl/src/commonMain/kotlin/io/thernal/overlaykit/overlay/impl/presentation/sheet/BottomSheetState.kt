@@ -29,6 +29,11 @@ internal class BottomSheetState(
     var sheetHeightPx: Float? by mutableStateOf(null)
         private set
 
+    // Bumped on every swap: the host keys the sheet's layout on it, so the next sheet is measured as a
+    // new node and reports its height even when it equals the last one's — onSizeChanged alone would not.
+    var entryGeneration: Int by mutableIntStateOf(0)
+        private set
+
     // Set once the sheet has settled open; a later settle at Hidden that this state did not start
     // is the user dragging or flinging it shut.
     internal var hasSettledExpanded: Boolean = false
@@ -97,5 +102,6 @@ internal class BottomSheetState(
     // Another sheet is taking over; its height is unknown until it is measured.
     override fun onEntrySwapped() {
         sheetHeightPx = null
+        entryGeneration++
     }
 }

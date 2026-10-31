@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
@@ -85,9 +86,6 @@ internal fun BoxScope.BottomSheetHost(
                 translationY = state.offsetPx(measuredHeightPx = height) +
                     height * entry.style.backGestureShift * backProgress.value
             }
-            .onSizeChanged { size ->
-                state.onSheetHeightChanged(size.height.toFloat())
-            }
             .then(dragging)
             .semantics {
                 paneTitle = strings.bottomSheetPane
@@ -96,7 +94,17 @@ internal fun BoxScope.BottomSheetHost(
             .focusRequester(focusRequester)
             .focusable(),
     ) {
-        entry.content()
+        key(state.entryGeneration) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .onSizeChanged { size ->
+                        state.onSheetHeightChanged(size.height.toFloat())
+                    },
+            ) {
+                entry.content()
+            }
+        }
     }
 }
 
